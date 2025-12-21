@@ -318,7 +318,7 @@ function Show-PrefetchMenu {
             Write-Color "[*] Descargando PrefetchView++ de Orbdiff..." "Yellow"
             
             try {
-                $url = "https://github.com/Orbdiff/PrefetchView/releases/download/v1.4/PrefetchView++.exe"
+                $url = "https://github.com/Orbdiff/PrefetchView/releases/download/v1.5/PrefetchView++.exe"
                 $outputFile = "$downloadPath\PrefetchView++.exe"
                 
                 Write-Color "  Descargando..." "White" -NoNewline
@@ -400,7 +400,7 @@ function Show-PrefetchMenu {
             Write-Color "[*] Descargando TODAS las herramientas Prefetch..." "Yellow"
             
             $tools = @(
-                @{Name="PrefetchView++"; Url="https://github.com/Orbdiff/PrefetchView/releases/download/v1.4/PrefetchView++.exe"},
+                @{Name="PrefetchView++"; Url="https://github.com/Orbdiff/PrefetchView/releases/download/v1.5/PrefetchView++.exe"},
                 @{Name="WinPrefetchView"; Url="https://www.nirsoft.net/utils/winprefetchview-x64.zip"},
                 @{Name="PrefetchParser"; Url="https://github.com/spokwn/prefetch-parser/releases/download/v1.5.5/PrefetchParser.exe"}
             )
@@ -823,8 +823,8 @@ function Show-OrbdiffToolsMenu {
         @{ID=1; Name="Fileless"; Url="https://github.com/Orbdiff/Fileless/releases/download/v1.1/Fileless.exe"},
         @{ID=2; Name="JARParser"; Url="https://github.com/Orbdiff/JARParser/releases/download/v1.2/JARParser.exe"},
         @{ID=3; Name="PFTrace"; Url="https://github.com/Orbdiff/PFTrace/releases/download/v1.0.1/PFTrace.exe"},
-        @{ID=4; Name="PrefetchView++"; Url="https://github.com/Orbdiff/PrefetchView/releases/download/v1.4/PrefetchView++.exe"},
-        @{ID=5; Name="BamDeletedKeys"; Url="https://github.com/Orbdiff/BamDeletedKeys/releases/download/v1.0/BamDeletedKeys.exe"}
+        @{ID=4; Name="PrefetchView++"; Url="https://github.com/Orbdiff/PrefetchView/releases/download/v1.5/PrefetchView++.exe"},
+        @{ID=5; Name="JournalParser"; Url="https://github.com/Orbdiff/JournalParser/releases/download/v1.1/JournalParser.exe"}
     )
     
     Write-Host ""
@@ -1218,7 +1218,7 @@ function Show-MainMenu {
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
-    Write-Menu "[1] 🛠️ Herramientas de Prefetch" -IsOption
+    Write-Menu "[1] 🛠️  Herramientas de Prefetch" -IsOption
     Write-Menu "[2] 📥 Descargar SS Tools" -IsOption
     Write-Menu "[3] 🔍 Bam-Parser      " -IsOption
     Write-Menu "[4] ⚡ JarParser" -IsOption
@@ -1281,4 +1281,3 @@ function Main {
 }
 
 Main
-
