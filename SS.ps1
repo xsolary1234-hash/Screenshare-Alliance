@@ -56,7 +56,7 @@ function Invoke-BamParser {
     Write-Host "                    discord.gg/ssa" -ForegroundColor Red
     Write-Host "========================================================" -ForegroundColor Red
     Write-Host ""
-    Write-Host "  Join our Discord discord.gg/ssa  " -NoNewline
+    Write-Host "  Join our Discord" -NoNewline
     Write-Host "discord.gg/ssa" -ForegroundColor Red
     Write-Host ""
     
@@ -939,7 +939,7 @@ function Show-MainMenu {
     
     Write-Color "[1] 🛠️  Herramientas de Prefetch" "Cyan"
     Write-Color "[2] 📥 Descargar SS Tools" "Cyan"
-    Write-Color "[3] 🔍 Bam-Parser (Analizador BAM)" "Cyan"
+    Write-Color "[3] 🔍 Bam-Parser        " "Cyan"
     Write-Color "[4] ⚡ JarParser" "Cyan"
     Write-Color "[5] 🎯 Kill Screen Processes" "Cyan"
     Write-Color "[6] 🚪 Salir" "Cyan"
