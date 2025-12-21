@@ -64,7 +64,7 @@ function Show-Banner {
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
     Write-Menu "           SCREENSHARE Screenshare Alliance v$global:version" -IsTitle
-    Write-Menu "                discord.gg/ssa" -IsTitle
+    Write-Menu "                Screenshare Tool" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
 }
@@ -75,7 +75,7 @@ function Invoke-BamParser {
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
     Write-Menu "                    SCREENSHARE ALLIANCE" -IsTitle
-    Write-Menu "                    discord.gg/ssa" -IsTitle
+    Write-Menu "                    Screenshare Tool" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     Write-Menu "  Join our Discord   " -NoNewline
