@@ -14,10 +14,10 @@ function Write-Menu {
     )
     
     if ($IsTitle) {
-        Write-Host $Text -ForegroundColor White -NoNewline:$NoNewline
+        Write-Host $Text -ForegroundColor Magenta -NoNewline:$NoNewline
     }
     elseif ($IsOption) {
-        Write-Host $Text -ForegroundColor White -NoNewline:$NoNewline
+        Write-Host $Text -ForegroundColor Magenta -NoNewline:$NoNewline
     }
     elseif ($IsWarning) {
         Write-Host $Text -ForegroundColor Yellow -NoNewline:$NoNewline
@@ -43,6 +43,7 @@ function Write-Color {
         White = "White"
         Gray = "Gray"
         Magenta = "Magenta"
+        Purple = "Magenta"
     }
     
     if ($NoNewline) {
@@ -63,7 +64,7 @@ function Show-Banner {
     Clear-Host
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
-    Write-Menu "            Screenshare Alliance v$global:version" -IsTitle
+    Write-Menu "                Screenshare Alliance v$global:version" -IsTitle
     Write-Menu "                Screenshare Tool" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
@@ -1281,4 +1282,3 @@ function Main {
 }
 
 Main
-
