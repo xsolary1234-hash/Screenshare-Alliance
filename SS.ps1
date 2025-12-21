@@ -1,4 +1,3 @@
-
 # discord.gg/ssa
 
 $global:version = "1.0.0"
@@ -29,8 +28,8 @@ function Show-Banner {
     Write-Host ""
     Write-Host "$($colors.Cyan)╔══════════════════════════════════════════════════════════╗$($colors.Reset)"
     Write-Host "$($colors.Cyan)║                                                          ║$($colors.Reset)"
-    Write-Host "$($colors.Cyan)║$($colors.White)  Screenshare SSA v$version$($colors.Cyan)║$($colors.Reset)"
-    Write-Host "$($colors.Cyan)║$($colors.White)       discord.gg/ssa      $($colors.Cyan)║$($colors.Reset)"
+    Write-Host "$($colors.Cyan)║$($colors.White)  Screenshare SSA v$version$($colors.Cyan)                      ║$($colors.Reset)"
+    Write-Host "$($colors.Cyan)║$($colors.White)       discord.gg/ssa      $($colors.Cyan)                     ║$($colors.Reset)"
     Write-Host "$($colors.Cyan)║                                                          ║$($colors.Reset)"
     Write-Host "$($colors.Cyan)╚══════════════════════════════════════════════════════════╝$($colors.Reset)"
     Write-Host ""
@@ -71,7 +70,7 @@ function Invoke-DoomsdayFucker {
     }
 }
 
-# Función para agregar exclusión de Windows Defender
+
 function Add-DefenderExclusion {
     param([string]$DownloadPath)
     
@@ -91,7 +90,7 @@ function Add-DefenderExclusion {
         }
     }
     catch {
-        # Continuar con otros métodos
+     
     }
     
     if (-not $success) {
@@ -107,7 +106,7 @@ function Add-DefenderExclusion {
             }
         }
         catch {
-            # Continuar con otros métodos
+         
         }
     }
     
@@ -118,7 +117,7 @@ function Add-DefenderExclusion {
     return $success
 }
 
-# Función para descargar archivos
+
 function Download-File {
     param([string]$Url, [string]$FileName, [string]$ToolName, [string]$DownloadPath)
     
@@ -145,7 +144,7 @@ function Download-File {
     }
 }
 
-# Función para descargar categorías de herramientas
+
 function Download-Tools {
     param([array]$Tools, [string]$CategoryName, [string]$DownloadPath)
     
@@ -158,12 +157,13 @@ function Download-Tools {
         }
     }
     
-    Write-Host "$($colors.Cyan)[+] $CategoryName: $successCount/$($Tools.Count) herramientas descargadas exitosamente$($colors.Reset)"
+
+    Write-Host ("$($colors.Cyan)[+] {0}: {1}/{2} herramientas descargadas exitosamente$($colors.Reset)" -f $CategoryName, $successCount, $Tools.Count)
     return $successCount
 }
 
-# Nueva función de descarga con el sistema de Lily
-function Invoke-LilyDownloadSystem {
+
+function Invoke-SSADownloadSystem {
     Clear-Host
     
     Write-Host @"
@@ -173,7 +173,7 @@ $($colors.Reset)
 $($colors.White)discord.gg/ssa$($colors.Reset)
 "@
 
-    Write-Host "`n$($colors.Red)[!] ADVERTENCIA: ASEGÚRATE DE TENER EL CONSENTIMIENTO DEL Usuario ANTES DE EJECUTAR,$($colors.Reset)"
+    Write-Host "`n$($colors.Red)[!] ADVERTENCIA: ASEGÚRATE DE TENER EL CONSENTIMIENTO DEL USUARIO ANTES DE EJECUTAR,$($colors.Reset)"
     Write-Host "$($colors.Red)[!] EL SCRIPT AGREGARÁ C:\SCREENSHARE A LAS EXCLUSIONES DEL ANTIVIRUS.$($colors.Reset)"
     Write-Host ""
     
@@ -491,7 +491,7 @@ function Show-Menu {
                 Invoke-DoomsdayFucker
             }
             "2" {
-                Invoke-LilyDownloadSystem
+                Invoke-SSADownloadSystem
                 Show-Banner
                 continue
             }
