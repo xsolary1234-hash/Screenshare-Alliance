@@ -56,7 +56,7 @@ function Invoke-BamParser {
     Write-Host "                    discord.gg/ssa" -ForegroundColor Red
     Write-Host "========================================================" -ForegroundColor Red
     Write-Host ""
-    Write-Host "  Join our Discord" -NoNewline
+    Write-Host "  Join our Discord " -NoNewline
     Write-Host "discord.gg/ssa" -ForegroundColor Red
     Write-Host ""
     
