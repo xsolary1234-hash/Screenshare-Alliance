@@ -1,4 +1,3 @@
-
 # discord.gg/ssa 
 
 $global:version = "2.3.0"
