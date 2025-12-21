@@ -63,7 +63,7 @@ function Show-Banner {
     Clear-Host
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
-    Write-Menu "           SCREENSHARE Screenshare Alliance v$global:version" -IsTitle
+    Write-Menu "            Screenshare Alliance v$global:version" -IsTitle
     Write-Menu "                Screenshare Tool" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
@@ -1281,3 +1281,4 @@ function Main {
 }
 
 Main
+
