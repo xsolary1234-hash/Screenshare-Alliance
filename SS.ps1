@@ -1,8 +1,35 @@
 # discord.gg/ssa 
 
-$global:version = "2.2.0"
+$global:version = "2.3.0"
 $global:isAdmin = $false
 
+
+function Write-Menu {
+    param(
+        [string]$Text,
+        [switch]$IsTitle,
+        [switch]$IsOption,
+        [switch]$IsWarning,
+        [switch]$NoNewline
+    )
+    
+    if ($IsTitle) {
+      
+        Write-Host $Text -ForegroundColor Cyan -NoNewline:$NoNewline
+    }
+    elseif ($IsOption) {
+      
+        Write-Host $Text -ForegroundColor White -BackgroundColor DarkBlue -NoNewline:$NoNewline
+    }
+    elseif ($IsWarning) {
+     
+        Write-Host $Text -ForegroundColor Yellow -NoNewline:$NoNewline
+    }
+    else {
+    
+        Write-Host $Text -ForegroundColor White -NoNewline:$NoNewline
+    }
+}
 
 function Write-Color {
     param(
@@ -15,11 +42,11 @@ function Write-Color {
         Red = "Red"
         Green = "Green"
         Yellow = "Yellow"
-        Blue = "Blue"
-        Magenta = "Magenta"
+        Blue = "DarkBlue"
         Cyan = "Cyan"
         White = "White"
         Gray = "Gray"
+        Magenta = "Magenta"
     }
     
     if ($NoNewline) {
@@ -39,10 +66,10 @@ function Test-Administrator {
 function Show-Banner {
     Clear-Host
     Write-Host ""
-    Write-Host "========================================================" -ForegroundColor Cyan
-    Write-Host "           SCREENSHARE ALLIANCE v$global:version" -ForegroundColor Cyan
-    Write-Host "                discord.gg/ssa" -ForegroundColor Cyan
-    Write-Host "========================================================" -ForegroundColor Cyan
+    Write-Menu "========================================================" -IsTitle
+    Write-Menu "           SCREENSHARE SSA Toolkit v$global:version" -IsTitle
+    Write-Menu "                discord.gg/ssa" -IsTitle
+    Write-Menu "========================================================" -IsTitle
     Write-Host ""
 }
 
@@ -51,16 +78,16 @@ function Invoke-BamParser {
     Clear-Host
     
     Write-Host ""
-    Write-Host "========================================================" -ForegroundColor Red
-    Write-Host "                    SCREENSHARE ALLIANCE" -ForegroundColor Red
-    Write-Host "                    discord.gg/ssa" -ForegroundColor Red
-    Write-Host "========================================================" -ForegroundColor Red
+    Write-Menu "========================================================" -IsTitle
+    Write-Menu "                    SCREENSHARE ALLIANCE" -IsTitle
+    Write-Menu "                    discord.gg/ssa" -IsTitle
+    Write-Menu "========================================================" -IsTitle
     Write-Host ""
-    Write-Host "  Join our Discord " -NoNewline
-    Write-Host "discord.gg/ssa" -ForegroundColor Red
+    Write-Menu "  Join our Discord discord.gg/ssa  " -NoNewline
+    Write-Menu "discord.gg/ssa" -IsWarning
     Write-Host ""
     
-
+  
     if (-not $global:isAdmin) {
         Write-Color "[!] Esta herramienta requiere permisos de administrador" "Red"
         Write-Color "[*] Por favor, ejecuta este script como administrador" "Yellow"
@@ -70,7 +97,7 @@ function Invoke-BamParser {
         return
     }
     
- 
+   
     function Get-Signature {
         [CmdletBinding()]
         param (
@@ -104,7 +131,7 @@ function Invoke-BamParser {
         }
     }
     
-
+ 
     $sw = [Diagnostics.Stopwatch]::StartNew()
     
     Write-Color "[*] Analizando claves BAM del registro..." "Yellow"
@@ -125,7 +152,7 @@ function Invoke-BamParser {
         }
     }
     
-
+ 
     $bv = ("bam", "bam\State")
     
 
@@ -160,7 +187,7 @@ function Invoke-BamParser {
     $UserBias = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation" -ErrorAction SilentlyContinue).ActiveTimeBias
     $UserDay = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation" -ErrorAction SilentlyContinue).DaylightBias
 
-
+ 
     $BamResults = @()
     $totalUsers = $Users.Count
     $currentUser = 0
@@ -178,7 +205,7 @@ function Invoke-BamParser {
                            Select-Object -ExpandProperty Property
                 
                 if ($BamItems) {
-               
+              
                     $User = ""
                     try {
                         $objSID = New-Object System.Security.Principal.SecurityIdentifier($Sid)
@@ -202,7 +229,7 @@ function Invoke-BamParser {
                             $Dayd = $Day/60
                             $TimeUser = (Get-Date ([DateTime]::FromFileTimeUtc([Convert]::ToInt64($Hex, 16))).addminutes($Bias) -Format "yyyy-MM-dd HH:mm:ss") 
                             
-                       
+                        
                             $d = if((((split-path -path $item) | ConvertFrom-String -Delimiter "\\").P3) -match '\d{1}') {
                                 ((split-path -path $item).Remove(23)).trimstart("\Device\HarddiskVolume")
                             } else { "" }
@@ -245,7 +272,7 @@ function Invoke-BamParser {
         }
     }
     
-
+  
     $sw.Stop()
     $t = [math]::Round($sw.Elapsed.TotalMinutes, 2)
     
@@ -256,7 +283,7 @@ function Invoke-BamParser {
         Write-Color "[*] Tiempo de ejecución: $t minutos" "Yellow"
         Write-Host ""
         
-  
+   
         try {
             $BamResults | Out-GridView -Title "BAM Parser - $($BamResults.Count) entradas encontradas | Zona horaria: $UserTime | Tiempo: $t minutos" -PassThru
         }
@@ -283,19 +310,19 @@ function Show-PrefetchMenu {
     Clear-Host
     
     Write-Host ""
-    Write-Host "========================================================" -ForegroundColor Cyan
-    Write-Host "                   HERRAMIENTAS PREFETCH" -ForegroundColor Cyan
-    Write-Host "========================================================" -ForegroundColor Cyan
+    Write-Menu "========================================================" -IsTitle
+    Write-Menu "                   HERRAMIENTAS PREFETCH" -IsTitle
+    Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
-    Write-Color "[1] Descargar PrefetchView++ (Orbdiff)" "White"
-    Write-Color "[2] Descargar WinPrefetchView (Nirsoft)" "White"
-    Write-Color "[3] Descargar Prefetch Parser (Spokwn)" "White"
-    Write-Color "[4] Analizar prefetch local" "White"
-    Write-Color "[5] Descargar TODAS las herramientas Prefetch" "White"
-    Write-Color "[6] Volver al menú principal" "White"
+    Write-Menu "[1] Descargar PrefetchView++ (Orbdiff)" -IsOption
+    Write-Menu "[2] Descargar WinPrefetchView (Nirsoft)" -IsOption
+    Write-Menu "[3] Descargar Prefetch Parser (Spokwn)" -IsOption
+    Write-Menu "[4] Analizar prefetch local" -IsOption
+    Write-Menu "[5] Descargar TODAS las herramientas Prefetch" -IsOption
+    Write-Menu "[6] Volver al menú principal" -IsOption
     Write-Host ""
-    Write-Host "--------------------------------------------------------" -ForegroundColor Gray
+    Write-Menu "--------------------------------------------------------" -IsTitle
     
     $choice = Read-Host "[?] Selecciona opción (1-6)"
     
@@ -334,7 +361,7 @@ function Show-PrefetchMenu {
                 Write-Color "  Descargando..." "White" -NoNewline
                 Invoke-WebRequest -Uri $url -OutFile $outputFile -UseBasicParsing | Out-Null
                 
-           
+             
                 Expand-Archive -Path $outputFile -DestinationPath $downloadPath -Force | Out-Null
                 Remove-Item $outputFile -Force | Out-Null
                 
@@ -448,20 +475,20 @@ function Show-DownloadSSTools {
     Clear-Host
     
     Write-Host ""
-    Write-Host "========================================================" -ForegroundColor Cyan
-    Write-Host "           DESCARGAR HERRAMIENTAS SS" -ForegroundColor Cyan
-    Write-Host "========================================================" -ForegroundColor Cyan
+    Write-Menu "========================================================" -IsTitle
+    Write-Menu "           DESCARGAR HERRAMIENTAS SS" -IsTitle
+    Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
-    Write-Color "[1] Descargar TODAS las herramientas" "Cyan"
-    Write-Color "[2] Herramientas de Eric Zimmerman" "White"
-    Write-Color "[3] Herramientas de Nirsoft" "White"
-    Write-Color "[4] Herramientas de Spokwn" "White"
-    Write-Color "[5] Herramientas de Orbdiff" "White"
-    Write-Color "[6] Otras herramientas útiles" "White"
-    Write-Color "[7] Volver al menú principal" "White"
+    Write-Menu "[1] Descargar TODAS las herramientas" -IsOption
+    Write-Menu "[2] Herramientas de Eric Zimmerman" -IsOption
+    Write-Menu "[3] Herramientas de Nirsoft" -IsOption
+    Write-Menu "[4] Herramientas de Spokwn" -IsOption
+    Write-Menu "[5] Herramientas de Orbdiff" -IsOption
+    Write-Menu "[6] Otras herramientas útiles" -IsOption
+    Write-Menu "[7] Volver al menú principal" -IsOption
     Write-Host ""
-    Write-Host "--------------------------------------------------------" -ForegroundColor Gray
+    Write-Menu "--------------------------------------------------------" -IsTitle
     
     $choice = Read-Host "[?] Selecciona opción (1-7)"
     
@@ -470,19 +497,19 @@ function Show-DownloadSSTools {
             Invoke-DownloadAllTools
         }
         "2" {
-            Invoke-DownloadZimmermanTools
+            Show-ZimmermanToolsMenu
         }
         "3" {
-            Invoke-DownloadNirsoftTools
+            Show-NirsoftToolsMenu
         }
         "4" {
-            Invoke-DownloadSpokwnTools
+            Show-SpokwnToolsMenu
         }
         "5" {
-            Invoke-DownloadOrbdiffTools
+            Show-OrbdiffToolsMenu
         }
         "6" {
-            Invoke-DownloadOtherTools
+            Show-OtherToolsMenu
         }
         "7" {
             return
@@ -493,6 +520,538 @@ function Show-DownloadSSTools {
             Show-DownloadSSTools
         }
     }
+}
+
+
+
+function Show-ZimmermanToolsMenu {
+    Clear-Host
+    
+    $zimmermanTools = @(
+        @{ID=1; Name="AmcacheParser"; Url="https://download.ericzimmermanstools.com/net9/AmcacheParser.zip"},
+        @{ID=2; Name="AppCompatCacheParser"; Url="https://download.ericzimmermanstools.com/net9/AppCompatCacheParser.zip"},
+        @{ID=3; Name="RegistryExplorer"; Url="https://download.ericzimmermanstools.com/net9/RegistryExplorer.zip"},
+        @{ID=4; Name="MFTECmd"; Url="https://download.ericzimmermanstools.com/net9/MFTECmd.zip"},
+        @{ID=5; Name="PECmd"; Url="https://download.ericzimmermanstools.com/net9/PECmd.zip"},
+        @{ID=6; Name="TimelineExplorer"; Url="https://download.ericzimmermanstools.com/net9/TimelineExplorer.zip"},
+        @{ID=7; Name="SrumECmd"; Url="https://download.ericzimmermanstools.com/net9/SrumECmd.zip"},
+        @{ID=8; Name="JumpListExplorer"; Url="https://download.ericzimmermanstools.com/net9/JumpListExplorer.zip"}
+    )
+    
+    Write-Host ""
+    Write-Menu "========================================================" -IsTitle
+    Write-Menu "        HERRAMIENTAS DE ERIC ZIMMERMAN" -IsTitle
+    Write-Menu "========================================================" -IsTitle
+    Write-Host ""
+    
+    foreach ($tool in $zimmermanTools) {
+        Write-Menu "[$($tool.ID)] $($tool.Name)" -IsOption
+    }
+    
+    Write-Menu "[A] Descargar TODAS las herramientas Zimmerman" -IsOption
+    Write-Menu "[X] Volver al menú anterior" -IsOption
+    Write-Host ""
+    Write-Menu "--------------------------------------------------------" -IsTitle
+    
+    $selection = Read-Host "[?] Selecciona herramienta (1-8, A, X)"
+    
+    $downloadPath = "C:\Screenshare\ZimmermanTools"
+    if (!(Test-Path $downloadPath)) {
+        New-Item -ItemType Directory -Path $downloadPath -Force | Out-Null
+    }
+    
+    if ($selection.ToUpper() -eq "A") {
+    
+        Write-Host ""
+        Write-Color "[*] Descargando TODAS las herramientas Zimmerman..." "Yellow"
+        
+        $success = 0
+        foreach ($tool in $zimmermanTools) {
+            Write-Color "  $($tool.Name)..." "White" -NoNewline
+            try {
+                $outputFile = "$downloadPath\$($tool.Name).zip"
+                Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
+                Write-Color " OK" "Green"
+                $success++
+            }
+            catch {
+                Write-Color " ERROR" "Red"
+            }
+        }
+        
+        Write-Color "`n[+] $success/$($zimmermanTools.Count) herramientas descargadas" "Green"
+        
+        $netResponse = Read-Host "`n[?] ¿Descargar .NET Runtime (requerido)? (S/N)"
+        if ($netResponse -match '^[SsYy]') {
+            Write-Color "  .NET Runtime..." "White" -NoNewline
+            try {
+                $netUrl = "https://builds.dotnet.microsoft.com/dotnet/Sdk/9.0.306/dotnet-sdk-9.0.306-win-x64.exe"
+                Invoke-WebRequest -Uri $netUrl -OutFile "$downloadPath\dotnet-runtime.exe" -UseBasicParsing | Out-Null
+                Write-Color " OK" "Green"
+            }
+            catch {
+                Write-Color " ERROR" "Red"
+            }
+        }
+    }
+    elseif ($selection.ToUpper() -eq "X") {
+        Show-DownloadSSTools
+        return
+    }
+    elseif ($selection -match '^\d+$' -and [int]$selection -ge 1 -and [int]$selection -le $zimmermanTools.Count) {
+
+        $tool = $zimmermanTools | Where-Object { $_.ID -eq [int]$selection } | Select-Object -First 1
+        
+        Write-Host ""
+        Write-Color "[*] Descargando $($tool.Name)..." "Yellow"
+        
+        Write-Color "  Descargando..." "White" -NoNewline
+        try {
+            $outputFile = "$downloadPath\$($tool.Name).zip"
+            Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
+            Write-Color " OK" "Green"
+            Write-Color "[+] Herramienta descargada en: $downloadPath" "Green"
+        }
+        catch {
+            Write-Color " ERROR" "Red"
+        }
+    }
+    else {
+        Write-Color "[!] Selección no válida" "Red"
+        Start-Sleep -Seconds 1
+        Show-ZimmermanToolsMenu
+        return
+    }
+    
+    Write-Color "`n[*] Ruta: $downloadPath" "Cyan"
+    
+    $open = Read-Host "`n[?] ¿Abrir carpeta de descargas? (S/N)"
+    if ($open -match '^[SsYy]') {
+        Start-Process $downloadPath
+    }
+    
+    Write-Host ""
+    Write-Color "[*] Presiona Enter para continuar..." "White"
+    $null = Read-Host
+    Show-ZimmermanToolsMenu
+}
+
+function Show-NirsoftToolsMenu {
+    Clear-Host
+    
+    $nirsoftTools = @(
+        @{ID=1; Name="USBDeview"; Url="https://www.nirsoft.net/utils/usbdeview-x64.zip"},
+        @{ID=2; Name="NetworkUsageView"; Url="https://www.nirsoft.net/utils/networkusageview-x64.zip"},
+        @{ID=3; Name="AlternateStreamView"; Url="https://www.nirsoft.net/utils/alternatestreamview-x64.zip"},
+        @{ID=4; Name="WinPrefetchView"; Url="https://www.nirsoft.net/utils/winprefetchview-x64.zip"},
+        @{ID=5; Name="UninstallView"; Url="https://www.nirsoft.net/utils/uninstallview-x64.zip"},
+        @{ID=6; Name="PreviousFilesRecovery"; Url="https://www.nirsoft.net/utils/previousfilesrecovery-x64.zip"},
+        @{ID=7; Name="WirelessNetView"; Url="https://www.nirsoft.net/utils/wirelessnetview.zip"},
+        @{ID=8; Name="WirelessKeyView"; Url="https://www.nirsoft.net/utils/wirelesskeyview.zip"}
+    )
+    
+    Write-Host ""
+    Write-Menu "========================================================" -IsTitle
+    Write-Menu "           HERRAMIENTAS DE NIRSOFT" -IsTitle
+    Write-Menu "========================================================" -IsTitle
+    Write-Host ""
+    
+    foreach ($tool in $nirsoftTools) {
+        Write-Menu "[$($tool.ID)] $($tool.Name)" -IsOption
+    }
+    
+    Write-Menu "[A] Descargar TODAS las herramientas Nirsoft" -IsOption
+    Write-Menu "[X] Volver al menú anterior" -IsOption
+    Write-Host ""
+    Write-Menu "--------------------------------------------------------" -IsTitle
+    
+    $selection = Read-Host "[?] Selecciona herramienta (1-8, A, X)"
+    
+    $downloadPath = "C:\Screenshare\NirsoftTools"
+    if (!(Test-Path $downloadPath)) {
+        New-Item -ItemType Directory -Path $downloadPath -Force | Out-Null
+    }
+    
+    if ($selection.ToUpper() -eq "A") {
+    
+        Write-Host ""
+        Write-Color "[*] Descargando TODAS las herramientas Nirsoft..." "Yellow"
+        
+        $success = 0
+        foreach ($tool in $nirsoftTools) {
+            Write-Color "  $($tool.Name)..." "White" -NoNewline
+            try {
+                $outputFile = "$downloadPath\$($tool.Name).zip"
+                Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
+                
+              
+                Expand-Archive -Path $outputFile -DestinationPath $downloadPath -Force | Out-Null
+                Remove-Item $outputFile -Force | Out-Null
+                
+                Write-Color " OK" "Green"
+                $success++
+            }
+            catch {
+                Write-Color " ERROR" "Red"
+            }
+        }
+        
+        Write-Color "`n[+] $success/$($nirsoftTools.Count) herramientas descargadas" "Green"
+    }
+    elseif ($selection.ToUpper() -eq "X") {
+        Show-DownloadSSTools
+        return
+    }
+    elseif ($selection -match '^\d+$' -and [int]$selection -ge 1 -and [int]$selection -le $nirsoftTools.Count) {
+     
+        $tool = $nirsoftTools | Where-Object { $_.ID -eq [int]$selection } | Select-Object -First 1
+        
+        Write-Host ""
+        Write-Color "[*] Descargando $($tool.Name)..." "Yellow"
+        
+        Write-Color "  Descargando..." "White" -NoNewline
+        try {
+            $outputFile = "$downloadPath\$($tool.Name).zip"
+            Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
+            
+           
+            Expand-Archive -Path $outputFile -DestinationPath $downloadPath -Force | Out-Null
+            Remove-Item $outputFile -Force | Out-Null
+            
+            Write-Color " OK" "Green"
+            Write-Color "[+] Herramienta descargada y extraída en: $downloadPath" "Green"
+        }
+        catch {
+            Write-Color " ERROR" "Red"
+        }
+    }
+    else {
+        Write-Color "[!] Selección no válida" "Red"
+        Start-Sleep -Seconds 1
+        Show-NirsoftToolsMenu
+        return
+    }
+    
+    Write-Color "`n[*] Ruta: $downloadPath" "Cyan"
+    
+    $open = Read-Host "`n[?] ¿Abrir carpeta de descargas? (S/N)"
+    if ($open -match '^[SsYy]') {
+        Start-Process $downloadPath
+    }
+    
+    Write-Host ""
+    Write-Color "[*] Presiona Enter para continuar..." "White"
+    $null = Read-Host
+    Show-NirsoftToolsMenu
+}
+
+function Show-SpokwnToolsMenu {
+    Clear-Host
+    
+    $spokwnTools = @(
+        @{ID=1; Name="KernelLiveDumpTool"; Url="https://github.com/spokwn/KernelLiveDumpTool/releases/download/v1.1/KernelLiveDumpTool.exe"},
+        @{ID=2; Name="BAMParser"; Url="https://github.com/spokwn/BAM-parser/releases/download/v1.2.9/BAMParser.exe"},
+        @{ID=3; Name="PathsParser"; Url="https://github.com/spokwn/PathsParser/releases/download/v1.2/PathsParser.exe"},
+        @{ID=4; Name="PrefetchParser"; Url="https://github.com/spokwn/prefetch-parser/releases/download/v1.5.5/PrefetchParser.exe"},
+        @{ID=5; Name="ActivitiesCacheParser"; Url="https://github.com/spokwn/ActivitiesCache-execution/releases/download/v0.6.5/ActivitiesCacheParser.exe"},
+        @{ID=6; Name="JournalTrace"; Url="https://github.com/spokwn/JournalTrace/releases/download/1.2/JournalTrace.exe"},
+        @{ID=7; Name="Tool (espouken)"; Url="https://github.com/spokwn/Tool/releases/download/v1.1.3/espouken.exe"},
+        @{ID=8; Name="PcaSvcExecuted"; Url="https://github.com/spokwn/pcasvc-executed/releases/download/v0.8.7/PcaSvcExecuted.exe"}
+    )
+    
+    Write-Host ""
+    Write-Menu "========================================================" -IsTitle
+    Write-Menu "           HERRAMIENTAS DE SPOKWN" -IsTitle
+    Write-Menu "========================================================" -IsTitle
+    Write-Host ""
+    
+    foreach ($tool in $spokwnTools) {
+        Write-Menu "[$($tool.ID)] $($tool.Name)" -IsOption
+    }
+    
+    Write-Menu "[A] Descargar TODAS las herramientas Spokwn" -IsOption
+    Write-Menu "[X] Volver al menú anterior" -IsOption
+    Write-Host ""
+    Write-Menu "--------------------------------------------------------" -IsTitle
+    
+    $selection = Read-Host "[?] Selecciona herramienta (1-8, A, X)"
+    
+    $downloadPath = "C:\Screenshare\SpokwnTools"
+    if (!(Test-Path $downloadPath)) {
+        New-Item -ItemType Directory -Path $downloadPath -Force | Out-Null
+    }
+    
+    if ($selection.ToUpper() -eq "A") {
+ 
+        Write-Host ""
+        Write-Color "[*] Descargando TODAS las herramientas Spokwn..." "Yellow"
+        
+        $success = 0
+        foreach ($tool in $spokwnTools) {
+            Write-Color "  $($tool.Name)..." "White" -NoNewline
+            try {
+                $outputFile = "$downloadPath\$($tool.Name).exe"
+                Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
+                Write-Color " OK" "Green"
+                $success++
+            }
+            catch {
+                Write-Color " ERROR" "Red"
+            }
+        }
+        
+        Write-Color "`n[+] $success/$($spokwnTools.Count) herramientas descargadas" "Green"
+    }
+    elseif ($selection.ToUpper() -eq "X") {
+        Show-DownloadSSTools
+        return
+    }
+    elseif ($selection -match '^\d+$' -and [int]$selection -ge 1 -and [int]$selection -le $spokwnTools.Count) {
+     
+        $tool = $spokwnTools | Where-Object { $_.ID -eq [int]$selection } | Select-Object -First 1
+        
+        Write-Host ""
+        Write-Color "[*] Descargando $($tool.Name)..." "Yellow"
+        
+        Write-Color "  Descargando..." "White" -NoNewline
+        try {
+            $outputFile = "$downloadPath\$($tool.Name).exe"
+            Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
+            Write-Color " OK" "Green"
+            Write-Color "[+] Herramienta descargada en: $downloadPath" "Green"
+        }
+        catch {
+            Write-Color " ERROR" "Red"
+        }
+    }
+    else {
+        Write-Color "[!] Selección no válida" "Red"
+        Start-Sleep -Seconds 1
+        Show-SpokwnToolsMenu
+        return
+    }
+    
+    Write-Color "`n[*] Ruta: $downloadPath" "Cyan"
+    
+    $open = Read-Host "`n[?] ¿Abrir carpeta de descargas? (S/N)"
+    if ($open -match '^[SsYy]') {
+        Start-Process $downloadPath
+    }
+    
+    Write-Host ""
+    Write-Color "[*] Presiona Enter para continuar..." "White"
+    $null = Read-Host
+    Show-SpokwnToolsMenu
+}
+
+function Show-OrbdiffToolsMenu {
+    Clear-Host
+    
+    $orbdiffTools = @(
+        @{ID=1; Name="Fileless"; Url="https://github.com/Orbdiff/Fileless/releases/download/v1.1/Fileless.exe"},
+        @{ID=2; Name="JARParser"; Url="https://github.com/Orbdiff/JARParser/releases/download/v1.2/JARParser.exe"},
+        @{ID=3; Name="PFTrace"; Url="https://github.com/Orbdiff/PFTrace/releases/download/v1.0.1/PFTrace.exe"},
+        @{ID=4; Name="PrefetchView++"; Url="https://github.com/Orbdiff/PrefetchView/releases/download/v1.4/PrefetchView++.exe"},
+        @{ID=5; Name="BamDeletedKeys"; Url="https://github.com/Orbdiff/BamDeletedKeys/releases/download/v1.0/BamDeletedKeys.exe"}
+    )
+    
+    Write-Host ""
+    Write-Menu "========================================================" -IsTitle
+    Write-Menu "           HERRAMIENTAS DE ORBDIFF" -IsTitle
+    Write-Menu "========================================================" -IsTitle
+    Write-Host ""
+    
+    foreach ($tool in $orbdiffTools) {
+        Write-Menu "[$($tool.ID)] $($tool.Name)" -IsOption
+    }
+    
+    Write-Menu "[A] Descargar TODAS las herramientas Orbdiff" -IsOption
+    Write-Menu "[X] Volver al menú anterior" -IsOption
+    Write-Host ""
+    Write-Menu "--------------------------------------------------------" -IsTitle
+    
+    $selection = Read-Host "[?] Selecciona herramienta (1-5, A, X)"
+    
+    $downloadPath = "C:\Screenshare\OrbdiffTools"
+    if (!(Test-Path $downloadPath)) {
+        New-Item -ItemType Directory -Path $downloadPath -Force | Out-Null
+    }
+    
+    if ($selection.ToUpper() -eq "A") {
+      
+        Write-Host ""
+        Write-Color "[*] Descargando TODAS las herramientas Orbdiff..." "Yellow"
+        
+        $success = 0
+        foreach ($tool in $orbdiffTools) {
+            Write-Color "  $($tool.Name)..." "White" -NoNewline
+            try {
+                $outputFile = "$downloadPath\$($tool.Name).exe"
+                Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
+                Write-Color " OK" "Green"
+                $success++
+            }
+            catch {
+                Write-Color " ERROR" "Red"
+            }
+        }
+        
+        Write-Color "`n[+] $success/$($orbdiffTools.Count) herramientas descargadas" "Green"
+    }
+    elseif ($selection.ToUpper() -eq "X") {
+        Show-DownloadSSTools
+        return
+    }
+    elseif ($selection -match '^\d+$' -and [int]$selection -ge 1 -and [int]$selection -le $orbdiffTools.Count) {
+        
+        $tool = $orbdiffTools | Where-Object { $_.ID -eq [int]$selection } | Select-Object -First 1
+        
+        Write-Host ""
+        Write-Color "[*] Descargando $($tool.Name)..." "Yellow"
+        
+        Write-Color "  Descargando..." "White" -NoNewline
+        try {
+            $outputFile = "$downloadPath\$($tool.Name).exe"
+            Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
+            Write-Color " OK" "Green"
+            Write-Color "[+] Herramienta descargada en: $downloadPath" "Green"
+        }
+        catch {
+            Write-Color " ERROR" "Red"
+        }
+    }
+    else {
+        Write-Color "[!] Selección no válida" "Red"
+        Start-Sleep -Seconds 1
+        Show-OrbdiffToolsMenu
+        return
+    }
+    
+    Write-Color "`n[*] Ruta: $downloadPath" "Cyan"
+    
+    $open = Read-Host "`n[?] ¿Abrir carpeta de descargas? (S/N)"
+    if ($open -match '^[SsYy]') {
+        Start-Process $downloadPath
+    }
+    
+    Write-Host ""
+    Write-Color "[*] Presiona Enter para continuar..." "White"
+    $null = Read-Host
+    Show-OrbdiffToolsMenu
+}
+
+function Show-OtherToolsMenu {
+    Clear-Host
+    
+    $otherTools = @(
+        @{ID=1; Name="Everything Search"; Url="https://www.voidtools.com/Everything-1.4.1.1029.x86-Setup.exe"},
+        @{ID=2; Name="System Informer"; Url="https://github.com/winsiderss/si-builds/releases/download/3.2.25297.1516/systeminformer-build-canary-setup.exe"},
+        @{ID=3; Name="FTK Imager"; Url="https://d1kpmuwb7gvu1i.cloudfront.net/AccessData_FTK_Imager_4.7.1.exe"},
+        @{ID=4; Name="Hayabusa"; Url="https://github.com/Yamato-Security/hayabusa/releases/download/v3.6.0/hayabusa-3.6.0-win-x64.zip"},
+        @{ID=5; Name=".NET Runtime"; Url="https://builds.dotnet.microsoft.com/dotnet/Sdk/9.0.306/dotnet-sdk-9.0.306-win-x64.exe"}
+    )
+    
+    Write-Host ""
+    Write-Menu "========================================================" -IsTitle
+    Write-Menu "          OTRAS HERRAMIENTAS ÚTILES" -IsTitle
+    Write-Menu "========================================================" -IsTitle
+    Write-Host ""
+    
+    foreach ($tool in $otherTools) {
+        Write-Menu "[$($tool.ID)] $($tool.Name)" -IsOption
+    }
+    
+    Write-Menu "[A] Descargar TODAS las otras herramientas" -IsOption
+    Write-Menu "[X] Volver al menú anterior" -IsOption
+    Write-Host ""
+    Write-Menu "--------------------------------------------------------" -IsTitle
+    
+    $selection = Read-Host "[?] Selecciona herramienta (1-5, A, X)"
+    
+    $downloadPath = "C:\Screenshare\OtherTools"
+    if (!(Test-Path $downloadPath)) {
+        New-Item -ItemType Directory -Path $downloadPath -Force | Out-Null
+    }
+    
+    if ($selection.ToUpper() -eq "A") {
+      
+        Write-Host ""
+        Write-Color "[*] Descargando TODAS las otras herramientas..." "Yellow"
+        
+        $success = 0
+        foreach ($tool in $otherTools) {
+            Write-Color "  $($tool.Name)..." "White" -NoNewline
+            try {
+                if ($tool.Url -like "*.zip") {
+                    $outputFile = "$downloadPath\$($tool.Name).zip"
+                    Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
+                    Expand-Archive -Path $outputFile -DestinationPath $downloadPath -Force | Out-Null
+                    Remove-Item $outputFile -Force | Out-Null
+                }
+                else {
+                    $outputFile = "$downloadPath\$($tool.Name).exe"
+                    Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
+                }
+                Write-Color " OK" "Green"
+                $success++
+            }
+            catch {
+                Write-Color " ERROR" "Red"
+            }
+        }
+        
+        Write-Color "`n[+] $success/$($otherTools.Count) herramientas descargadas" "Green"
+    }
+    elseif ($selection.ToUpper() -eq "X") {
+        Show-DownloadSSTools
+        return
+    }
+    elseif ($selection -match '^\d+$' -and [int]$selection -ge 1 -and [int]$selection -le $otherTools.Count) {
+      
+        $tool = $otherTools | Where-Object { $_.ID -eq [int]$selection } | Select-Object -First 1
+        
+        Write-Host ""
+        Write-Color "[*] Descargando $($tool.Name)..." "Yellow"
+        
+        Write-Color "  Descargando..." "White" -NoNewline
+        try {
+            if ($tool.Url -like "*.zip") {
+                $outputFile = "$downloadPath\$($tool.Name).zip"
+                Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
+                Expand-Archive -Path $outputFile -DestinationPath $downloadPath -Force | Out-Null
+                Remove-Item $outputFile -Force | Out-Null
+                Write-Color " OK" "Green"
+                Write-Color "[+] Herramienta descargada y extraída en: $downloadPath" "Green"
+            }
+            else {
+                $outputFile = "$downloadPath\$($tool.Name).exe"
+                Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
+                Write-Color " OK" "Green"
+                Write-Color "[+] Herramienta descargada en: $downloadPath" "Green"
+            }
+        }
+        catch {
+            Write-Color " ERROR" "Red"
+        }
+    }
+    else {
+        Write-Color "[!] Selección no válida" "Red"
+        Start-Sleep -Seconds 1
+        Show-OtherToolsMenu
+        return
+    }
+    
+    Write-Color "`n[*] Ruta: $downloadPath" "Cyan"
+    
+    $open = Read-Host "`n[?] ¿Abrir carpeta de descargas? (S/N)"
+    if ($open -match '^[SsYy]') {
+        Start-Process $downloadPath
+    }
+    
+    Write-Host ""
+    Write-Color "[*] Presiona Enter para continuar..." "White"
+    $null = Read-Host
+    Show-OtherToolsMenu
 }
 
 function Invoke-DownloadAllTools {
@@ -511,18 +1070,65 @@ function Invoke-DownloadAllTools {
     Write-Color "Carpeta principal: $mainPath" "Cyan"
     Write-Host ""
     
-   
-    Invoke-DownloadZimmermanTools -silent $true
-    Write-Host ""
-    Invoke-DownloadNirsoftTools -silent $true
-    Write-Host ""
-    Invoke-DownloadSpokwnTools -silent $true
-    Write-Host ""
-    Invoke-DownloadOrbdiffTools -silent $true
-    Write-Host ""
-    Invoke-DownloadOtherTools -silent $true
+
+    $totalSuccess = 0
+    $totalTools = 0
     
-    Write-Color "`n[+] ¡Todas las herramientas han sido descargadas!" "Green"
+ 
+    Write-Color "[*] Descargando herramientas Zimmerman..." "Yellow"
+    $zimmermanTools = @(
+        @{Name="AmcacheParser"; Url="https://download.ericzimmermanstools.com/net9/AmcacheParser.zip"},
+        @{Name="RegistryExplorer"; Url="https://download.ericzimmermanstools.com/net9/RegistryExplorer.zip"}
+    )
+    foreach ($tool in $zimmermanTools) {
+        Write-Color "  $($tool.Name)..." "White" -NoNewline
+        try {
+            $path = "C:\Screenshare\ZimmermanTools"
+            if (!(Test-Path $path)) { New-Item -ItemType Directory -Path $path -Force | Out-Null }
+            Invoke-WebRequest -Uri $tool.Url -OutFile "$path\$($tool.Name).zip" -UseBasicParsing | Out-Null
+            Write-Color " OK" "Green"
+            $totalSuccess++
+        } catch { Write-Color " ERROR" "Red" }
+        $totalTools++
+    }
+    
+  
+    Write-Color "[*] Descargando herramientas Nirsoft..." "Yellow"
+    $nirsoftTools = @(
+        @{Name="USBDeview"; Url="https://www.nirsoft.net/utils/usbdeview-x64.zip"},
+        @{Name="WinPrefetchView"; Url="https://www.nirsoft.net/utils/winprefetchview-x64.zip"}
+    )
+    foreach ($tool in $nirsoftTools) {
+        Write-Color "  $($tool.Name)..." "White" -NoNewline
+        try {
+            $path = "C:\Screenshare\NirsoftTools"
+            if (!(Test-Path $path)) { New-Item -ItemType Directory -Path $path -Force | Out-Null }
+            Invoke-WebRequest -Uri $tool.Url -OutFile "$path\$($tool.Name).zip" -UseBasicParsing | Out-Null
+            Write-Color " OK" "Green"
+            $totalSuccess++
+        } catch { Write-Color " ERROR" "Red" }
+        $totalTools++
+    }
+    
+   
+    Write-Color "[*] Descargando herramientas Spokwn..." "Yellow"
+    $spokwnTools = @(
+        @{Name="BAMParser"; Url="https://github.com/spokwn/BAM-parser/releases/download/v1.2.9/BAMParser.exe"},
+        @{Name="PrefetchParser"; Url="https://github.com/spokwn/prefetch-parser/releases/download/v1.5.5/PrefetchParser.exe"}
+    )
+    foreach ($tool in $spokwnTools) {
+        Write-Color "  $($tool.Name)..." "White" -NoNewline
+        try {
+            $path = "C:\Screenshare\SpokwnTools"
+            if (!(Test-Path $path)) { New-Item -ItemType Directory -Path $path -Force | Out-Null }
+            Invoke-WebRequest -Uri $tool.Url -OutFile "$path\$($tool.Name).exe" -UseBasicParsing | Out-Null
+            Write-Color " OK" "Green"
+            $totalSuccess++
+        } catch { Write-Color " ERROR" "Red" }
+        $totalTools++
+    }
+    
+    Write-Color "`n[+] $totalSuccess/$totalTools herramientas principales descargadas" "Green"
     Write-Color "[*] Ubicación: $mainPath" "Cyan"
     
     $open = Read-Host "`n[?] ¿Abrir carpeta principal? (S/N)"
@@ -534,295 +1140,6 @@ function Invoke-DownloadAllTools {
     Write-Color "[*] Presiona Enter para continuar..." "White"
     $null = Read-Host
     Show-DownloadSSTools
-}
-
-function Invoke-DownloadZimmermanTools {
-    param([bool]$silent = $false)
-    
-    if (-not $silent) {
-        Clear-Host
-        Write-Host ""
-        Write-Color "[*] Descargando herramientas de Eric Zimmerman..." "Yellow"
-    }
-    
-    $downloadPath = "C:\Screenshare\ZimmermanTools"
-    if (!(Test-Path $downloadPath)) {
-        New-Item -ItemType Directory -Path $downloadPath -Force | Out-Null
-    }
-    
-    $tools = @(
-        @{Name="AmcacheParser"; Url="https://download.ericzimmermanstools.com/net9/AmcacheParser.zip"},
-        @{Name="AppCompatCacheParser"; Url="https://download.ericzimmermanstools.com/net9/AppCompatCacheParser.zip"},
-        @{Name="RegistryExplorer"; Url="https://download.ericzimmermanstools.com/net9/RegistryExplorer.zip"},
-        @{Name="MFTECmd"; Url="https://download.ericzimmermanstools.com/net9/MFTECmd.zip"},
-        @{Name="PECmd"; Url="https://download.ericzimmermanstools.com/net9/PECmd.zip"}
-    )
-    
-    $success = 0
-    foreach ($tool in $tools) {
-        if (-not $silent) {
-            Write-Color "  $($tool.Name)..." "White" -NoNewline
-        }
-        try {
-            $outputFile = "$downloadPath\$($tool.Name).zip"
-            Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
-            if (-not $silent) {
-                Write-Color " OK" "Green"
-            }
-            $success++
-        }
-        catch {
-            if (-not $silent) {
-                Write-Color " ERROR" "Red"
-            }
-        }
-    }
-    
-    if (-not $silent) {
-        Write-Color "`n[+] $success/$($tools.Count) herramientas descargadas" "Green"
-        Write-Color "[*] Ruta: $downloadPath" "Cyan"
-        
-        $netResponse = Read-Host "`n[?] ¿Descargar .NET Runtime (requerido)? (S/N)"
-        if ($netResponse -match '^[SsYy]') {
-            Write-Color "  .NET Runtime..." "White" -NoNewline
-            try {
-                $netUrl = "https://builds.dotnet.microsoft.com/dotnet/Sdk/9.0.306/dotnet-sdk-9.0.306-win-x64.exe"
-                Invoke-WebRequest -Uri $netUrl -OutFile "$downloadPath\dotnet-runtime.exe" -UseBasicParsing | Out-Null
-                Write-Color " OK" "Green"
-            }
-            catch {
-                Write-Color " ERROR" "Red"
-            }
-        }
-        
-        Write-Host ""
-        Write-Color "[*] Presiona Enter para continuar..." "White"
-        $null = Read-Host
-        Show-DownloadSSTools
-    }
-}
-
-function Invoke-DownloadNirsoftTools {
-    param([bool]$silent = $false)
-    
-    if (-not $silent) {
-        Clear-Host
-        Write-Host ""
-        Write-Color "[*] Descargando herramientas de Nirsoft..." "Yellow"
-    }
-    
-    $downloadPath = "C:\Screenshare\NirsoftTools"
-    if (!(Test-Path $downloadPath)) {
-        New-Item -ItemType Directory -Path $downloadPath -Force | Out-Null
-    }
-    
-    $tools = @(
-        @{Name="USBDeview"; Url="https://www.nirsoft.net/utils/usbdeview-x64.zip"},
-        @{Name="NetworkUsageView"; Url="https://www.nirsoft.net/utils/networkusageview-x64.zip"},
-        @{Name="AlternateStreamView"; Url="https://www.nirsoft.net/utils/alternatestreamview-x64.zip"},
-        @{Name="WinPrefetchView"; Url="https://www.nirsoft.net/utils/winprefetchview-x64.zip"},
-        @{Name="UninstallView"; Url="https://www.nirsoft.net/utils/uninstallview-x64.zip"}
-    )
-    
-    $success = 0
-    foreach ($tool in $tools) {
-        if (-not $silent) {
-            Write-Color "  $($tool.Name)..." "White" -NoNewline
-        }
-        try {
-            $outputFile = "$downloadPath\$($tool.Name).zip"
-            Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
-            
-      
-            Expand-Archive -Path $outputFile -DestinationPath $downloadPath -Force | Out-Null
-            Remove-Item $outputFile -Force | Out-Null
-            
-            if (-not $silent) {
-                Write-Color " OK" "Green"
-            }
-            $success++
-        }
-        catch {
-            if (-not $silent) {
-                Write-Color " ERROR" "Red"
-            }
-        }
-    }
-    
-    if (-not $silent) {
-        Write-Color "`n[+] $success/$($tools.Count) herramientas descargadas" "Green"
-        Write-Color "[*] Ruta: $downloadPath" "Cyan"
-        
-        Write-Host ""
-        Write-Color "[*] Presiona Enter para continuar..." "White"
-        $null = Read-Host
-        Show-DownloadSSTools
-    }
-}
-
-function Invoke-DownloadSpokwnTools {
-    param([bool]$silent = $false)
-    
-    if (-not $silent) {
-        Clear-Host
-        Write-Host ""
-        Write-Color "[*] Descargando herramientas de Spokwn..." "Yellow"
-    }
-    
-    $downloadPath = "C:\Screenshare\SpokwnTools"
-    if (!(Test-Path $downloadPath)) {
-        New-Item -ItemType Directory -Path $downloadPath -Force | Out-Null
-    }
-    
-    $tools = @(
-        @{Name="KernelLiveDumpTool"; Url="https://github.com/spokwn/KernelLiveDumpTool/releases/download/v1.1/KernelLiveDumpTool.exe"},
-        @{Name="BAMParser"; Url="https://github.com/spokwn/BAM-parser/releases/download/v1.2.9/BAMParser.exe"},
-        @{Name="PathsParser"; Url="https://github.com/spokwn/PathsParser/releases/download/v1.2/PathsParser.exe"},
-        @{Name="PrefetchParser"; Url="https://github.com/spokwn/prefetch-parser/releases/download/v1.5.5/PrefetchParser.exe"},
-        @{Name="ActivitiesCacheParser"; Url="https://github.com/spokwn/ActivitiesCache-execution/releases/download/v0.6.5/ActivitiesCacheParser.exe"}
-    )
-    
-    $success = 0
-    foreach ($tool in $tools) {
-        if (-not $silent) {
-            Write-Color "  $($tool.Name)..." "White" -NoNewline
-        }
-        try {
-            $outputFile = "$downloadPath\$($tool.Name).exe"
-            Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
-            if (-not $silent) {
-                Write-Color " OK" "Green"
-            }
-            $success++
-        }
-        catch {
-            if (-not $silent) {
-                Write-Color " ERROR" "Red"
-            }
-        }
-    }
-    
-    if (-not $silent) {
-        Write-Color "`n[+] $success/$($tools.Count) herramientas descargadas" "Green"
-        Write-Color "[*] Ruta: $downloadPath" "Cyan"
-        
-        Write-Host ""
-        Write-Color "[*] Presiona Enter para continuar..." "White"
-        $null = Read-Host
-        Show-DownloadSSTools
-    }
-}
-
-function Invoke-DownloadOrbdiffTools {
-    param([bool]$silent = $false)
-    
-    if (-not $silent) {
-        Clear-Host
-        Write-Host ""
-        Write-Color "[*] Descargando herramientas de Orbdiff..." "Yellow"
-    }
-    
-    $downloadPath = "C:\Screenshare\OrbdiffTools"
-    if (!(Test-Path $downloadPath)) {
-        New-Item -ItemType Directory -Path $downloadPath -Force | Out-Null
-    }
-    
-    $tools = @(
-        @{Name="Fileless"; Url="https://github.com/Orbdiff/Fileless/releases/download/v1.1/Fileless.exe"},
-        @{Name="JARParser"; Url="https://github.com/Orbdiff/JARParser/releases/download/v1.2/JARParser.exe"},
-        @{Name="PFTrace"; Url="https://github.com/Orbdiff/PFTrace/releases/download/v1.0.1/PFTrace.exe"},
-        @{Name="PrefetchView++"; Url="https://github.com/Orbdiff/PrefetchView/releases/download/v1.4/PrefetchView++.exe"}
-    )
-    
-    $success = 0
-    foreach ($tool in $tools) {
-        if (-not $silent) {
-            Write-Color "  $($tool.Name)..." "White" -NoNewline
-        }
-        try {
-            $outputFile = "$downloadPath\$($tool.Name).exe"
-            Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
-            if (-not $silent) {
-                Write-Color " OK" "Green"
-            }
-            $success++
-        }
-        catch {
-            if (-not $silent) {
-                Write-Color " ERROR" "Red"
-            }
-        }
-    }
-    
-    if (-not $silent) {
-        Write-Color "`n[+] $success/$($tools.Count) herramientas descargadas" "Green"
-        Write-Color "[*] Ruta: $downloadPath" "Cyan"
-        
-        Write-Host ""
-        Write-Color "[*] Presiona Enter para continuar..." "White"
-        $null = Read-Host
-        Show-DownloadSSTools
-    }
-}
-
-function Invoke-DownloadOtherTools {
-    param([bool]$silent = $false)
-    
-    if (-not $silent) {
-        Clear-Host
-        Write-Host ""
-        Write-Color "[*] Descargando otras herramientas útiles..." "Yellow"
-    }
-    
-    $downloadPath = "C:\Screenshare\OtherTools"
-    if (!(Test-Path $downloadPath)) {
-        New-Item -ItemType Directory -Path $downloadPath -Force | Out-Null
-    }
-    
-    $tools = @(
-        @{Name="Everything"; Url="https://www.voidtools.com/Everything-1.4.1.1029.x86-Setup.exe"},
-        @{Name="SystemInformer"; Url="https://github.com/winsiderss/si-builds/releases/download/3.2.25297.1516/systeminformer-build-canary-setup.exe"},
-        @{Name="FTKImager"; Url="https://d1kpmuwb7gvu1i.cloudfront.net/AccessData_FTK_Imager_4.7.1.exe"},
-        @{Name="Hayabusa"; Url="https://github.com/Yamato-Security/hayabusa/releases/download/v3.6.0/hayabusa-3.6.0-win-x64.zip"}
-    )
-    
-    $success = 0
-    foreach ($tool in $tools) {
-        if (-not $silent) {
-            Write-Color "  $($tool.Name)..." "White" -NoNewline
-        }
-        try {
-            if ($tool.Url -like "*.zip") {
-                $outputFile = "$downloadPath\$($tool.Name).zip"
-                Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
-                Expand-Archive -Path $outputFile -DestinationPath $downloadPath -Force | Out-Null
-                Remove-Item $outputFile -Force | Out-Null
-            }
-            else {
-                $outputFile = "$downloadPath\$($tool.Name).exe"
-                Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
-            }
-            if (-not $silent) {
-                Write-Color " OK" "Green"
-            }
-            $success++
-        }
-        catch {
-            if (-not $silent) {
-                Write-Color " ERROR" "Red"
-            }
-        }
-    }
-    
-    if (-not $silent) {
-        Write-Color "`n[+] $success/$($tools.Count) herramientas descargadas" "Green"
-        Write-Color "[*] Ruta: $downloadPath" "Cyan"
-        
-        Write-Host ""
-        Write-Color "[*] Presiona Enter para continuar..." "White"
-        $null = Read-Host
-        Show-DownloadSSTools
-    }
 }
 
 
@@ -868,9 +1185,9 @@ function Invoke-KillScreenProcesses {
     Clear-Host
     
     Write-Host ""
-    Write-Host "======================================================" -ForegroundColor Green
-    Write-Host "   Killer Capture Screen Processes (by Diff)" -ForegroundColor Green
-    Write-Host "======================================================" -ForegroundColor Green
+    Write-Menu "======================================================" -IsTitle
+    Write-Menu "   Killer Capture Screen Processes (by Diff)" -IsTitle
+    Write-Menu "======================================================" -IsTitle
     Write-Host ""
     
     $targetProcesses = @(
@@ -897,7 +1214,7 @@ function Invoke-KillScreenProcesses {
     else {
         Write-Color "[!] Procesos encontrados:" "Yellow"
         foreach ($proc in $foundProcesses) {
-            Write-Host "  - $proc.exe" -ForegroundColor Cyan
+            Write-Host "  - $proc.exe" -ForegroundColor White
         }
         
         Write-Host ""
@@ -932,19 +1249,19 @@ function Show-MainMenu {
     }
     
     Write-Host ""
-    Write-Host "========================================================" -ForegroundColor Cyan
-    Write-Host "                   MENÚ PRINCIPAL" -ForegroundColor Cyan
-    Write-Host "========================================================" -ForegroundColor Cyan
+    Write-Menu "========================================================" -IsTitle
+    Write-Menu "                   MENÚ PRINCIPAL" -IsTitle
+    Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
-    Write-Color "[1] 🛠️  Herramientas de Prefetch" "Cyan"
-    Write-Color "[2] 📥 Descargar SS Tools" "Cyan"
-    Write-Color "[3] 🔍 Bam-Parser        " "Cyan"
-    Write-Color "[4] ⚡ JarParser" "Cyan"
-    Write-Color "[5] 🎯 Kill Screen Processes" "Cyan"
-    Write-Color "[6] 🚪 Salir" "Cyan"
+    Write-Menu "[1] 🛠️  Herramientas de Prefetch" -IsOption
+    Write-Menu "[2] 📥 Descargar SS Tools" -IsOption
+    Write-Menu "[3] 🔍 Bam-Parser (Analizador BAM)" -IsOption
+    Write-Menu "[4] ⚡ JarParser" -IsOption
+    Write-Menu "[5] 🎯 Kill Screen Processes" -IsOption
+    Write-Menu "[6] 🚪 Salir" -IsOption
     Write-Host ""
-    Write-Host "--------------------------------------------------------" -ForegroundColor Gray
+    Write-Menu "--------------------------------------------------------" -IsTitle
     
     $choice = Read-Host "[?] Selecciona opción (1-6)"
     
@@ -973,9 +1290,9 @@ function Show-MainMenu {
             Write-Host ""
             Write-Color "[+] Saliendo... ¡Hasta pronto!" "Green"
             Write-Host ""
-            Write-Host "========================================================" -ForegroundColor Cyan
-            Write-Host "               discord.gg/ssa" -ForegroundColor Cyan
-            Write-Host "========================================================" -ForegroundColor Cyan
+            Write-Menu "========================================================" -IsTitle
+            Write-Menu "               discord.gg/ssa" -IsTitle
+            Write-Menu "========================================================" -IsTitle
             return
         }
         default {
@@ -1001,4 +1318,3 @@ function Main {
 }
 
 Main
-
