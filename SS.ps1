@@ -1,3 +1,5 @@
+agrega en las herramientras de nirsoft lastactivityview userassistview  y otras 3 de nirsoft que se te pinten pero que sirvan en una screenshare
+
 # discord.gg/ssa 
 
 $global:version = "2.3.0"
@@ -14,7 +16,7 @@ function Write-Menu {
     )
     
     if ($IsTitle) {
-        Write-Host $Text -ForegroundColor Cyan -NoNewline:$NoNewline
+        Write-Host $Text -ForegroundColor White -NoNewline:$NoNewline
     }
     elseif ($IsOption) {
         Write-Host $Text -ForegroundColor White -NoNewline:$NoNewline
@@ -39,7 +41,7 @@ function Write-Color {
         Green = "Green"
         Yellow = "Yellow"
         Blue = "DarkBlue"
-        Cyan = "Cyan"
+        Cyan = "White"
         White = "White"
         Gray = "Gray"
         Magenta = "Magenta"
@@ -181,7 +183,7 @@ function Invoke-BamParser {
     
     foreach ($Sid in $Users) {
         $currentUser++
-        Write-Color "[*] Procesando usuario $currentUser/$totalUsers..." "Cyan"
+        Write-Color "[*] Procesando usuario $currentUser/$totalUsers..." "White"
         
         foreach($rp in $rpath){
             $pathToCheck = "$($rp)UserSettings\$Sid"
@@ -261,8 +263,8 @@ function Invoke-BamParser {
     
     if ($BamResults.Count -gt 0) {
         Write-Color "`n[+] Análisis completado" "Green"
-        Write-Color "[*] Se encontraron $($BamResults.Count) entradas BAM" "Cyan"
-        Write-Color "[*] Zona horaria: $UserTime" "Cyan"
+        Write-Color "[*] Se encontraron $($BamResults.Count) entradas BAM" "White"
+        Write-Color "[*] Zona horaria: $UserTime" "White"
         Write-Color "[*] Tiempo de ejecución: $t minutos" "Yellow"
         Write-Host ""
         
@@ -381,7 +383,7 @@ function Show-PrefetchMenu {
                 if ($prefetchFiles.Count -gt 0) {
                     Write-Color "[+] Se encontraron $($prefetchFiles.Count) archivos .pf" "Green"
                     Write-Host ""
-                    Write-Color "Últimos archivos Prefetch:" "Cyan"
+                    Write-Color "Últimos archivos Prefetch:" "White"
                     
                     foreach ($file in $prefetchFiles) {
                         Write-Host "  - $($file.Name) ($([math]::Round($file.Length/1KB, 2)) KB)" -ForegroundColor White
@@ -598,7 +600,7 @@ function Show-ZimmermanToolsMenu {
         return
     }
     
-    Write-Color "`n[*] Ruta: $downloadPath" "Cyan"
+    Write-Color "`n[*] Ruta: $downloadPath" "White"
     
     $open = Read-Host "`n[?] ¿Abrir carpeta de descargas? (S/N)"
     if ($open -match '^[SsYy]') {
@@ -614,15 +616,16 @@ function Show-ZimmermanToolsMenu {
 function Show-NirsoftToolsMenu {
     Clear-Host
     
+    # Herramientas de Nirsoft actualizadas con LastActivityView, UserAssistView y otras 3 útiles para screenshare
     $nirsoftTools = @(
-        @{ID=1; Name="USBDeview"; Url="https://www.nirsoft.net/utils/usbdeview-x64.zip"},
-        @{ID=2; Name="NetworkUsageView"; Url="https://www.nirsoft.net/utils/networkusageview-x64.zip"},
-        @{ID=3; Name="AlternateStreamView"; Url="https://www.nirsoft.net/utils/alternatestreamview-x64.zip"},
-        @{ID=4; Name="WinPrefetchView"; Url="https://www.nirsoft.net/utils/winprefetchview-x64.zip"},
-        @{ID=5; Name="UninstallView"; Url="https://www.nirsoft.net/utils/uninstallview-x64.zip"},
-        @{ID=6; Name="PreviousFilesRecovery"; Url="https://www.nirsoft.net/utils/previousfilesrecovery-x64.zip"},
-        @{ID=7; Name="WirelessNetView"; Url="https://www.nirsoft.net/utils/wirelessnetview.zip"},
-        @{ID=8; Name="WirelessKeyView"; Url="https://www.nirsoft.net/utils/wirelesskeyview.zip"}
+        @{ID=1; Name="LastActivityView"; Url="https://www.nirsoft.net/utils/lastactivityview.zip"; Description="Muestra el historial de actividad del sistema"},
+        @{ID=2; Name="UserAssistView"; Url="https://www.nirsoft.net/utils/userassistview-x64.zip"; Description="Analiza claves UserAssist del registro"},
+        @{ID=3; Name="USBDeview"; Url="https://www.nirsoft.net/utils/usbdeview-x64.zip"; Description="Muestra dispositivos USB conectados"},
+        @{ID=4; Name="NetworkUsageView"; Url="https://www.nirsoft.net/utils/networkusageview-x64.zip"; Description="Monitor de uso de red"},
+        @{ID=5; Name="AlternateStreamView"; Url="https://www.nirsoft.net/utils/alternatestreamview-x64.zip"; Description="Detecta flujos alternos ADS"},
+        @{ID=6; Name="WinPrefetchView"; Url="https://www.nirsoft.net/utils/winprefetchview-x64.zip"; Description="Analiza archivos prefetch"},
+        @{ID=7; Name="ShellBagsView"; Url="https://www.nirsoft.net/utils/shellbagsview-x64.zip"; Description="Analiza ShellBags (historial de carpetas)"},
+        @{ID=8; Name="TurnedOnTimesView"; Url="https://www.nirsoft.net/utils/turnedontimesview-x64.zip"; Description="Muestra horas de encendido/apagado"}
     )
     
     Write-Host ""
@@ -633,6 +636,7 @@ function Show-NirsoftToolsMenu {
     
     foreach ($tool in $nirsoftTools) {
         Write-Menu "[$($tool.ID)] $($tool.Name)" -IsOption
+        Write-Host "     $($tool.Description)" -ForegroundColor Gray
     }
     
     Write-Menu "[A] Descargar TODAS las herramientas Nirsoft" -IsOption
@@ -680,6 +684,7 @@ function Show-NirsoftToolsMenu {
         
         Write-Host ""
         Write-Color "[*] Descargando $($tool.Name)..." "Yellow"
+        Write-Color "[*] Descripción: $($tool.Description)" "White"
         
         Write-Color "  Descargando..." "White" -NoNewline
         try {
@@ -703,7 +708,7 @@ function Show-NirsoftToolsMenu {
         return
     }
     
-    Write-Color "`n[*] Ruta: $downloadPath" "Cyan"
+    Write-Color "`n[*] Ruta: $downloadPath" "White"
     
     $open = Read-Host "`n[?] ¿Abrir carpeta de descargas? (S/N)"
     if ($open -match '^[SsYy]') {
@@ -800,7 +805,7 @@ function Show-SpokwnToolsMenu {
         return
     }
     
-    Write-Color "`n[*] Ruta: $downloadPath" "Cyan"
+    Write-Color "`n[*] Ruta: $downloadPath" "White"
     
     $open = Read-Host "`n[?] ¿Abrir carpeta de descargas? (S/N)"
     if ($open -match '^[SsYy]') {
@@ -894,7 +899,7 @@ function Show-OrbdiffToolsMenu {
         return
     }
     
-    Write-Color "`n[*] Ruta: $downloadPath" "Cyan"
+    Write-Color "`n[*] Ruta: $downloadPath" "White"
     
     $open = Read-Host "`n[?] ¿Abrir carpeta de descargas? (S/N)"
     if ($open -match '^[SsYy]') {
@@ -1006,7 +1011,7 @@ function Show-OtherToolsMenu {
         return
     }
     
-    Write-Color "`n[*] Ruta: $downloadPath" "Cyan"
+    Write-Color "`n[*] Ruta: $downloadPath" "White"
     
     $open = Read-Host "`n[?] ¿Abrir carpeta de descargas? (S/N)"
     if ($open -match '^[SsYy]') {
@@ -1031,7 +1036,7 @@ function Invoke-DownloadAllTools {
         New-Item -ItemType Directory -Path $mainPath -Force | Out-Null
     }
     
-    Write-Color "Carpeta principal: $mainPath" "Cyan"
+    Write-Color "Carpeta principal: $mainPath" "White"
     Write-Host ""
     
     $totalSuccess = 0
@@ -1055,7 +1060,10 @@ function Invoke-DownloadAllTools {
     }
     
     Write-Color "[*] Descargando herramientas Nirsoft..." "Yellow"
+    # Incluyendo las nuevas herramientas de Nirsoft
     $nirsoftTools = @(
+        @{Name="LastActivityView"; Url="https://www.nirsoft.net/utils/lastactivityview.zip"},
+        @{Name="UserAssistView"; Url="https://www.nirsoft.net/utils/userassistview-x64.zip"},
         @{Name="USBDeview"; Url="https://www.nirsoft.net/utils/usbdeview-x64.zip"},
         @{Name="WinPrefetchView"; Url="https://www.nirsoft.net/utils/winprefetchview-x64.zip"}
     )
@@ -1089,7 +1097,7 @@ function Invoke-DownloadAllTools {
     }
     
     Write-Color "`n[+] $totalSuccess/$totalTools herramientas principales descargadas" "Green"
-    Write-Color "[*] Ubicación: $mainPath" "Cyan"
+    Write-Color "[*] Ubicación: $mainPath" "White"
     
     $open = Read-Host "`n[?] ¿Abrir carpeta principal? (S/N)"
     if ($open -match '^[SsYy]') {
