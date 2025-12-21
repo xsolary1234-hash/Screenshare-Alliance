@@ -67,7 +67,7 @@ function Show-Banner {
     Clear-Host
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
-    Write-Menu "           SCREENSHARE SSA Toolkit v$global:version" -IsTitle
+    Write-Menu "           SCREENSHARE Screenshare Alliance v$global:version" -IsTitle
     Write-Menu "                discord.gg/ssa" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
@@ -83,7 +83,7 @@ function Invoke-BamParser {
     Write-Menu "                    discord.gg/ssa" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
-    Write-Menu "  Join our Discord discord.gg/ssa  " -NoNewline
+    Write-Menu "  Join our Discord   " -NoNewline
     Write-Menu "discord.gg/ssa" -IsWarning
     Write-Host ""
     
@@ -1256,7 +1256,7 @@ function Show-MainMenu {
     
     Write-Menu "[1] 🛠️  Herramientas de Prefetch" -IsOption
     Write-Menu "[2] 📥 Descargar SS Tools" -IsOption
-    Write-Menu "[3] 🔍 Bam-Parser (Analizador BAM)" -IsOption
+    Write-Menu "[3] 🔍 Bam-Parser        " -IsOption
     Write-Menu "[4] ⚡ JarParser" -IsOption
     Write-Menu "[5] 🎯 Kill Screen Processes" -IsOption
     Write-Menu "[6] 🚪 Salir" -IsOption
