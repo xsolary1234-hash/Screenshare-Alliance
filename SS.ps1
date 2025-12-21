@@ -705,11 +705,11 @@ function Show-MainMenu {
     Write-Host "========================================================" -ForegroundColor Cyan
     Write-Host ""
     
-    Write-Color "[1] 🛠️  Herramientas de Prefetch" "Cyan"
-    Write-Color "[2] 📥 Descargar SS Tools" "Cyan"
-    Write-Color "[3] ⚡ JarParser" "Cyan"
-    Write-Color "[4] 🎯 Kill Screen Processes" "Cyan"
-    Write-Color "[5] 🚪 Salir" "Cyan"
+    Write-Color "[1]    Herramientas de Prefetch" "Cyan"
+    Write-Color "[2]   Descargar SS Tools" "Cyan"
+    Write-Color "[3]   JarParser" "Cyan"
+    Write-Color "[4]   Kill Screen Processes" "Cyan"
+    Write-Color "[5]   Salir" "Cyan"
     Write-Host ""
     Write-Host "--------------------------------------------------------" -ForegroundColor Gray
     
