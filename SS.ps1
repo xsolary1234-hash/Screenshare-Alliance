@@ -1,5 +1,4 @@
 
-
 # discord.gg/ssa 
 
 $global:version = "2.3.0"
@@ -616,7 +615,7 @@ function Show-ZimmermanToolsMenu {
 function Show-NirsoftToolsMenu {
     Clear-Host
     
-    # Herramientas de Nirsoft actualizadas con LastActivityView, UserAssistView y otras 3 útiles para screenshare
+   
     $nirsoftTools = @(
         @{ID=1; Name="LastActivityView"; Url="https://www.nirsoft.net/utils/lastactivityview.zip"; Description="Muestra el historial de actividad del sistema"},
         @{ID=2; Name="UserAssistView"; Url="https://www.nirsoft.net/utils/userassistview-x64.zip"; Description="Analiza claves UserAssist del registro"},
@@ -1060,7 +1059,7 @@ function Invoke-DownloadAllTools {
     }
     
     Write-Color "[*] Descargando herramientas Nirsoft..." "Yellow"
-    # Incluyendo las nuevas herramientas de Nirsoft
+   
     $nirsoftTools = @(
         @{Name="LastActivityView"; Url="https://www.nirsoft.net/utils/lastactivityview.zip"},
         @{Name="UserAssistView"; Url="https://www.nirsoft.net/utils/userassistview-x64.zip"},
@@ -1283,4 +1282,3 @@ function Main {
 }
 
 Main
-
