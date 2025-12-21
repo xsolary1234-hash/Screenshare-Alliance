@@ -14,19 +14,15 @@ function Write-Menu {
     )
     
     if ($IsTitle) {
-      
         Write-Host $Text -ForegroundColor Cyan -NoNewline:$NoNewline
     }
     elseif ($IsOption) {
-      
-        Write-Host $Text -ForegroundColor White -BackgroundColor DarkBlue -NoNewline:$NoNewline
+        Write-Host $Text -ForegroundColor White -NoNewline:$NoNewline
     }
     elseif ($IsWarning) {
-     
         Write-Host $Text -ForegroundColor Yellow -NoNewline:$NoNewline
     }
     else {
-    
         Write-Host $Text -ForegroundColor White -NoNewline:$NoNewline
     }
 }
@@ -73,7 +69,6 @@ function Show-Banner {
     Write-Host ""
 }
 
-
 function Invoke-BamParser {
     Clear-Host
     
@@ -87,7 +82,6 @@ function Invoke-BamParser {
     Write-Menu "discord.gg/ssa" -IsWarning
     Write-Host ""
     
-  
     if (-not $global:isAdmin) {
         Write-Color "[!] Esta herramienta requiere permisos de administrador" "Red"
         Write-Color "[*] Por favor, ejecuta este script como administrador" "Yellow"
@@ -97,7 +91,6 @@ function Invoke-BamParser {
         return
     }
     
-   
     function Get-Signature {
         [CmdletBinding()]
         param (
@@ -131,13 +124,11 @@ function Invoke-BamParser {
         }
     }
     
- 
     $sw = [Diagnostics.Stopwatch]::StartNew()
     
     Write-Color "[*] Analizando claves BAM del registro..." "Yellow"
     Write-Host ""
     
-
     if (!(Get-PSDrive -Name HKLM -PSProvider Registry)){
         try {
             New-PSDrive -Name HKLM -PSProvider Registry -Root HKEY_LOCAL_MACHINE | Out-Null
@@ -152,10 +143,8 @@ function Invoke-BamParser {
         }
     }
     
- 
     $bv = ("bam", "bam\State")
     
-
     try {
         $Users = foreach($ii in $bv){
             Get-ChildItem -Path "HKLM:\SYSTEM\CurrentControlSet\Services\$($ii)\UserSettings\" -ErrorAction SilentlyContinue | 
@@ -182,12 +171,10 @@ function Invoke-BamParser {
     
     $rpath = @("HKLM:\SYSTEM\CurrentControlSet\Services\bam\","HKLM:\SYSTEM\CurrentControlSet\Services\bam\state\")
 
-
     $UserTime = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation" -ErrorAction SilentlyContinue).TimeZoneKeyName
     $UserBias = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation" -ErrorAction SilentlyContinue).ActiveTimeBias
     $UserDay = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation" -ErrorAction SilentlyContinue).DaylightBias
 
- 
     $BamResults = @()
     $totalUsers = $Users.Count
     $currentUser = 0
@@ -205,7 +192,6 @@ function Invoke-BamParser {
                            Select-Object -ExpandProperty Property
                 
                 if ($BamItems) {
-              
                     $User = ""
                     try {
                         $objSID = New-Object System.Security.Principal.SecurityIdentifier($Sid)
@@ -229,7 +215,6 @@ function Invoke-BamParser {
                             $Dayd = $Day/60
                             $TimeUser = (Get-Date ([DateTime]::FromFileTimeUtc([Convert]::ToInt64($Hex, 16))).addminutes($Bias) -Format "yyyy-MM-dd HH:mm:ss") 
                             
-                        
                             $d = if((((split-path -path $item) | ConvertFrom-String -Delimiter "\\").P3) -match '\d{1}') {
                                 ((split-path -path $item).Remove(23)).trimstart("\Device\HarddiskVolume")
                             } else { "" }
@@ -250,7 +235,6 @@ function Invoke-BamParser {
                                 Get-Signature -FilePath $path
                             } else { "" }
                             
-                       
                             $BamResults += [PSCustomObject]@{
                                 'Examiner Time' = $TimeLocal
                                 'Last Execution Time (UTC)' = $TimeUTC
@@ -272,7 +256,6 @@ function Invoke-BamParser {
         }
     }
     
-  
     $sw.Stop()
     $t = [math]::Round($sw.Elapsed.TotalMinutes, 2)
     
@@ -283,7 +266,6 @@ function Invoke-BamParser {
         Write-Color "[*] Tiempo de ejecución: $t minutos" "Yellow"
         Write-Host ""
         
-   
         try {
             $BamResults | Out-GridView -Title "BAM Parser - $($BamResults.Count) entradas encontradas | Zona horaria: $UserTime | Tiempo: $t minutos" -PassThru
         }
@@ -304,7 +286,6 @@ function Invoke-BamParser {
     Write-Color "[*] Presiona Enter para continuar..." "White"
     $null = Read-Host
 }
-
 
 function Show-PrefetchMenu {
     Clear-Host
@@ -361,7 +342,6 @@ function Show-PrefetchMenu {
                 Write-Color "  Descargando..." "White" -NoNewline
                 Invoke-WebRequest -Uri $url -OutFile $outputFile -UseBasicParsing | Out-Null
                 
-             
                 Expand-Archive -Path $outputFile -DestinationPath $downloadPath -Force | Out-Null
                 Remove-Item $outputFile -Force | Out-Null
                 
@@ -470,7 +450,6 @@ function Show-PrefetchMenu {
     Show-PrefetchMenu
 }
 
-
 function Show-DownloadSSTools {
     Clear-Host
     
@@ -522,8 +501,6 @@ function Show-DownloadSSTools {
     }
 }
 
-
-
 function Show-ZimmermanToolsMenu {
     Clear-Host
     
@@ -561,7 +538,6 @@ function Show-ZimmermanToolsMenu {
     }
     
     if ($selection.ToUpper() -eq "A") {
-    
         Write-Host ""
         Write-Color "[*] Descargando TODAS las herramientas Zimmerman..." "Yellow"
         
@@ -599,7 +575,6 @@ function Show-ZimmermanToolsMenu {
         return
     }
     elseif ($selection -match '^\d+$' -and [int]$selection -ge 1 -and [int]$selection -le $zimmermanTools.Count) {
-
         $tool = $zimmermanTools | Where-Object { $_.ID -eq [int]$selection } | Select-Object -First 1
         
         Write-Host ""
@@ -673,7 +648,6 @@ function Show-NirsoftToolsMenu {
     }
     
     if ($selection.ToUpper() -eq "A") {
-    
         Write-Host ""
         Write-Color "[*] Descargando TODAS las herramientas Nirsoft..." "Yellow"
         
@@ -684,7 +658,6 @@ function Show-NirsoftToolsMenu {
                 $outputFile = "$downloadPath\$($tool.Name).zip"
                 Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
                 
-              
                 Expand-Archive -Path $outputFile -DestinationPath $downloadPath -Force | Out-Null
                 Remove-Item $outputFile -Force | Out-Null
                 
@@ -703,7 +676,6 @@ function Show-NirsoftToolsMenu {
         return
     }
     elseif ($selection -match '^\d+$' -and [int]$selection -ge 1 -and [int]$selection -le $nirsoftTools.Count) {
-     
         $tool = $nirsoftTools | Where-Object { $_.ID -eq [int]$selection } | Select-Object -First 1
         
         Write-Host ""
@@ -714,7 +686,6 @@ function Show-NirsoftToolsMenu {
             $outputFile = "$downloadPath\$($tool.Name).zip"
             Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
             
-           
             Expand-Archive -Path $outputFile -DestinationPath $downloadPath -Force | Out-Null
             Remove-Item $outputFile -Force | Out-Null
             
@@ -782,7 +753,6 @@ function Show-SpokwnToolsMenu {
     }
     
     if ($selection.ToUpper() -eq "A") {
- 
         Write-Host ""
         Write-Color "[*] Descargando TODAS las herramientas Spokwn..." "Yellow"
         
@@ -807,7 +777,6 @@ function Show-SpokwnToolsMenu {
         return
     }
     elseif ($selection -match '^\d+$' -and [int]$selection -ge 1 -and [int]$selection -le $spokwnTools.Count) {
-     
         $tool = $spokwnTools | Where-Object { $_.ID -eq [int]$selection } | Select-Object -First 1
         
         Write-Host ""
@@ -878,7 +847,6 @@ function Show-OrbdiffToolsMenu {
     }
     
     if ($selection.ToUpper() -eq "A") {
-      
         Write-Host ""
         Write-Color "[*] Descargando TODAS las herramientas Orbdiff..." "Yellow"
         
@@ -903,7 +871,6 @@ function Show-OrbdiffToolsMenu {
         return
     }
     elseif ($selection -match '^\d+$' -and [int]$selection -ge 1 -and [int]$selection -le $orbdiffTools.Count) {
-        
         $tool = $orbdiffTools | Where-Object { $_.ID -eq [int]$selection } | Select-Object -First 1
         
         Write-Host ""
@@ -974,7 +941,6 @@ function Show-OtherToolsMenu {
     }
     
     if ($selection.ToUpper() -eq "A") {
-      
         Write-Host ""
         Write-Color "[*] Descargando TODAS las otras herramientas..." "Yellow"
         
@@ -1007,7 +973,6 @@ function Show-OtherToolsMenu {
         return
     }
     elseif ($selection -match '^\d+$' -and [int]$selection -ge 1 -and [int]$selection -le $otherTools.Count) {
-      
         $tool = $otherTools | Where-Object { $_.ID -eq [int]$selection } | Select-Object -First 1
         
         Write-Host ""
@@ -1061,7 +1026,6 @@ function Invoke-DownloadAllTools {
     Write-Color "[!] Esto puede tomar varios minutos" "Yellow"
     Write-Host ""
     
-
     $mainPath = "C:\Screenshare"
     if (!(Test-Path $mainPath)) {
         New-Item -ItemType Directory -Path $mainPath -Force | Out-Null
@@ -1070,11 +1034,9 @@ function Invoke-DownloadAllTools {
     Write-Color "Carpeta principal: $mainPath" "Cyan"
     Write-Host ""
     
-
     $totalSuccess = 0
     $totalTools = 0
     
- 
     Write-Color "[*] Descargando herramientas Zimmerman..." "Yellow"
     $zimmermanTools = @(
         @{Name="AmcacheParser"; Url="https://download.ericzimmermanstools.com/net9/AmcacheParser.zip"},
@@ -1092,7 +1054,6 @@ function Invoke-DownloadAllTools {
         $totalTools++
     }
     
-  
     Write-Color "[*] Descargando herramientas Nirsoft..." "Yellow"
     $nirsoftTools = @(
         @{Name="USBDeview"; Url="https://www.nirsoft.net/utils/usbdeview-x64.zip"},
@@ -1110,7 +1071,6 @@ function Invoke-DownloadAllTools {
         $totalTools++
     }
     
-   
     Write-Color "[*] Descargando herramientas Spokwn..." "Yellow"
     $spokwnTools = @(
         @{Name="BAMParser"; Url="https://github.com/spokwn/BAM-parser/releases/download/v1.2.9/BAMParser.exe"},
@@ -1141,7 +1101,6 @@ function Invoke-DownloadAllTools {
     $null = Read-Host
     Show-DownloadSSTools
 }
-
 
 function Invoke-JarParser {
     Write-Host ""
@@ -1237,7 +1196,6 @@ function Invoke-KillScreenProcesses {
     $null = Read-Host
 }
 
-
 function Show-MainMenu {
     Show-Banner
     
@@ -1256,7 +1214,7 @@ function Show-MainMenu {
     
     Write-Menu "[1] 🛠️  Herramientas de Prefetch" -IsOption
     Write-Menu "[2] 📥 Descargar SS Tools" -IsOption
-    Write-Menu "[3] 🔍 Bam-Parser        " -IsOption
+    Write-Menu "[3] 🔍 Bam-Parser (Analizador BAM)" -IsOption
     Write-Menu "[4] ⚡ JarParser" -IsOption
     Write-Menu "[5] 🎯 Kill Screen Processes" -IsOption
     Write-Menu "[6] 🚪 Salir" -IsOption
@@ -1302,7 +1260,6 @@ function Show-MainMenu {
         }
     }
 }
-
 
 function Main {
     $global:isAdmin = Test-Administrator
