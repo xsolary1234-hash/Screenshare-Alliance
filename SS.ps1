@@ -27,33 +27,12 @@ function Test-Administrator {
 function Show-Banner {
     Clear-Host
     Write-Host ""
-    Write-Host "$($colors.Cyan)                                    ███████╗ ██████╗ ██████╗ " -NoNewline
-    Write-Host "$($colors.Reset)"
-    Write-Host "$($colors.Cyan)                                    ██╔══██╗" -NoNewline
-    Write-Host "$($colors.Reset)"
-    Write-Host "$($colors.Cyan)                                    ██████╔╝" -NoNewline
-    Write-Host "$($colors.Reset)"
-    Write-Host "$($colors.Cyan)                                    ██╔══██╗ " -NoNewline
-    Write-Host "$($colors.Reset)"
-    Write-Host "$($colors.Cyan)                                    ██║  ██║" -NoNewline
-    Write-Host "$($colors.Reset)"
-    Write-Host "$($colors.Cyan)                                   ╚══════╝███████╗███████╗███╗   ██╗███████╗██╗  ██╗ █████╗ ██████╗ ███████╗" -NoNewline
-    Write-Host "$($colors.Reset)"
-    Write-Host "$($colors.Cyan)                                    ██╔════╝██╔════╝██╔════╝██╔════╝████╗  ██║██╔════╝██║  ██║██╔══██╗██╔══██╗██╔════╝" -NoNewline
-    Write-Host "$($colors.Reset)"
-    Write-Host "$($colors.Cyan)                                    ███████╗██║     █████╗  █████╗  ██╔██╗ ██║███████╗███████║███████║██████╔╝█████╗  " -NoNewline
-    Write-Host "$($colors.Reset)"
-    Write-Host "$($colors.Cyan)                                    ╚════██║██║     ██╔══╝  ██╔══╝  ██║╚██╗██║╚════██║██╔══██║██╔══██║██╔══██╗██╔══╝  " -NoNewline
-    Write-Host "$($colors.Reset)"
-    Write-Host "$($colors.Cyan)                                    ███████║╚██████╗███████╗███████╗██║ ╚████║███████║██║  ██║██║  ██║██║  ██║███████╗" -NoNewline
-    Write-Host "$($colors.Reset)"
-    Write-Host "$($colors.Cyan)                                    ╚══════╝ ╚═════╝╚══════╝╚══════╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝ " -NoNewline
-    Write-Host "$($colors.Reset)"
-    Write-Host ""
-    Write-Host "$($colors.Cyan)                                                        Version: $version" -NoNewline
-    Write-Host "$($colors.Reset)"
-    Write-Host "$($colors.White)                                        SCREENSHARE Tdiscord.gg/ssa" -NoNewline
-    Write-Host "$($colors.Reset)"
+    Write-Host "$($colors.Cyan)╔══════════════════════════════════════════════════════════╗$($colors.Reset)"
+    Write-Host "$($colors.Cyan)║                                                          ║$($colors.Reset)"
+    Write-Host "$($colors.Cyan)║$($colors.White)  Screenshare SSA v$version$($colors.Cyan)║$($colors.Reset)"
+    Write-Host "$($colors.Cyan)║$($colors.White)       discord.gg/ssa      $($colors.Cyan)║$($colors.Reset)"
+    Write-Host "$($colors.Cyan)║                                                          ║$($colors.Reset)"
+    Write-Host "$($colors.Cyan)╚══════════════════════════════════════════════════════════╝$($colors.Reset)"
     Write-Host ""
 }
 
@@ -76,7 +55,7 @@ function Invoke-DoomsdayFucker {
         Write-Host "$($colors.Yellow)[*] Solicitando permisos de administrador...$($colors.Reset)"
         
         try {
-      
+          
             $script = "irm 'https://pastebin.com/raw/bRGvrGSw' | iex"
             $bytes = [System.Text.Encoding]::Unicode.GetBytes($script)
             $encodedCommand = [Convert]::ToBase64String($bytes)
@@ -92,146 +71,258 @@ function Invoke-DoomsdayFucker {
     }
 }
 
-
-function Get-NirSoftTools {
-    $nirsoftDir = "NirSoft_Tools"
-    $tools = @(
-        @{Name = "WirelessNetView"; URL = "https://www.nirsoft.net/utils/wirelessnetview.zip"},
-        @{Name = "WirelessKeyView"; URL = "https://www.nirsoft.net/utils/wirelesskeyview.zip"},
-        @{Name = "CurrPorts"; URL = "https://www.nirsoft.net/utils/cports.zip"},
-        @{Name = "ShellExView"; URL = "https://www.nirsoft.net/utils/shexview.zip"},
-        @{Name = "FileTypesMan"; URL = "https://www.nirsoft.net/utils/filetypesman.zip"},
-        @{Name = "USBDeview"; URL = "https://www.nirsoft.net/utils/usbdeview.zip"},
-        @{Name = "WebBrowserPassView"; URL = "https://www.nirsoft.net/utils/webbrowserpassview.zip"},
-        @{Name = "ProduKey"; URL = "https://www.nirsoft.net/utils/produkey.zip"},
-        @{Name = "BlueScreenView"; URL = "https://www.nirsoft.net/utils/bluescreenview.zip"},
-        @{Name = "RegScanner"; URL = "https://www.nirsoft.net/utils/regscanner.zip"}
-    )
+# Función para agregar exclusión de Windows Defender
+function Add-DefenderExclusion {
+    param([string]$DownloadPath)
     
-    $downloaded = 0
-    $failed = 0
+    Write-Host "$($colors.Cyan)[*] Configurando exclusión de antivirus...$($colors.Reset)"
+    Write-Host "$($colors.White)[*] Agregando exclusión de Windows Defender para: $DownloadPath" -NoNewline
     
-    if (-not (Test-Path $nirsoftDir)) {
-        New-Item -ItemType Directory -Path $nirsoftDir | Out-Null
+    $success = $false
+    
+    try {
+        if (Get-Command Get-MpPreference -ErrorAction SilentlyContinue) {
+            $existingExclusions = (Get-MpPreference -ErrorAction Stop).ExclusionPath
+            if ($existingExclusions -notcontains $DownloadPath) {
+                Add-MpPreference -ExclusionPath $DownloadPath -ErrorAction Stop
+            }
+            Write-Host "$($colors.Green) Éxito$($colors.Reset)"
+            $success = $true
+        }
+    }
+    catch {
+        # Continuar con otros métodos
     }
     
-    foreach ($tool in $tools) {
+    if (-not $success) {
         try {
-            $toolDir = Join-Path $nirsoftDir $tool.Name
-            if (-not (Test-Path $toolDir)) {
-                New-Item -ItemType Directory -Path $toolDir | Out-Null
+            $regPath = "HKLM:\SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths"
+            if (Test-Path $regPath) {
+                $existingValue = Get-ItemProperty -Path $regPath -Name $DownloadPath -ErrorAction SilentlyContinue
+                if (-not $existingValue) {
+                    New-ItemProperty -Path $regPath -Name $DownloadPath -Value 0 -PropertyType DWORD -Force -ErrorAction Stop | Out-Null
+                }
+                Write-Host "$($colors.Green) Éxito$($colors.Reset)"
+                $success = $true
             }
-            
-            Write-Host "$($colors.Yellow)[*] Descargando $($tool.Name)...$($colors.Reset)"
-            
-            $zipPath = Join-Path $toolDir "$($tool.Name).zip"
-            
-       
-            Invoke-WebRequest -Uri $tool.URL -OutFile $zipPath -UseBasicParsing
-            
-         
-            Expand-Archive -Path $zipPath -DestinationPath $toolDir -Force
-            Remove-Item -Path $zipPath -Force
-            
-            $downloaded++
-            Write-Host "$($colors.Green)[+] $($tool.Name) descargado correctamente$($colors.Reset)"
         }
         catch {
-            $failed++
-            Write-Host "$($colors.Red)[-] Error con $($tool.Name): $_$($colors.Reset)"
+            # Continuar con otros métodos
         }
     }
     
-  
-    $readmeContent = @"
-# NirSoft Tools Collection
-Descargado automáticamente por SCREENSHARE Toolkit
-
-## Herramientas ($downloaded/$($tools.Count)):
-$($tools | ForEach-Object { "- $($_.Name)`n" })
-
-## Estadísticas:
-- Descargadas: $downloaded
-- Fallidas: $failed
-- Total: $($tools.Count)
-
-Cada herramienta está en su propia carpeta.
-Más en: https://www.nirsoft.net/utils/
-"@
-    
-    Set-Content -Path (Join-Path $nirsoftDir "README.txt") -Value $readmeContent
-    
-    return @{
-        Downloaded = $downloaded
-        Failed = $failed
-        Directory = $nirsoftDir
+    if (-not $success) {
+        Write-Host "$($colors.Red) Falló$($colors.Reset)"
     }
+    
+    return $success
 }
 
-
-function Get-EricZimmermanTools {
-    $ericDir = "Eric_Zimmerman_Tools"
-    $tools = @(
-        @{Name = "PECmd"; URL = "https://f001.backblazeb2.com/file/EricZimmermanTools/PECmd.zip"},
-        @{Name = "RBCmd"; URL = "https://f001.backblazeb2.com/file/EricZimmermanTools/RBCmd.zip"},
-        @{Name = "JLECmd"; URL = "https://f001.backblazeb2.com/file/EricZimmermanTools/JLECmd.zip"},
-        @{Name = "EvtxECmd"; URL = "https://f001.backblazeb2.com/file/EricZimmermanTools/EvtxECmd.zip"}
-    )
+# Función para descargar archivos
+function Download-File {
+    param([string]$Url, [string]$FileName, [string]$ToolName, [string]$DownloadPath)
     
-    $downloaded = 0
-    
-    if (-not (Test-Path $ericDir)) {
-        New-Item -ItemType Directory -Path $ericDir | Out-Null
-    }
-    
-    foreach ($tool in $tools) {
-        try {
-            $toolDir = Join-Path $ericDir $tool.Name
-            if (-not (Test-Path $toolDir)) {
-                New-Item -ItemType Directory -Path $toolDir | Out-Null
-            }
-            
-            Write-Host "$($colors.Yellow)[*] Descargando $($tool.Name)...$($colors.Reset)"
-            
-            $zipPath = Join-Path $toolDir "$($tool.Name).zip"
-            
-           
-            Invoke-WebRequest -Uri $tool.URL -OutFile $zipPath -UseBasicParsing
-            
+    try {
+        $outputPath = Join-Path $DownloadPath $FileName
+        Write-Host "$($colors.White)  Descargando $ToolName" -NoNewline
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest -Uri $Url -OutFile $outputPath -UserAgent "PowerShell" -UseBasicParsing | Out-Null
         
-            Expand-Archive -Path $zipPath -DestinationPath $toolDir -Force
-            Remove-Item -Path $zipPath -Force
-            
-            $downloaded++
-            Write-Host "$($colors.Green)[+] $($tool.Name) descargado$($colors.Reset)"
+        if ($FileName -like "*.zip") {
+            $extractPath = Join-Path $DownloadPath ($FileName -replace '\.zip$', '')
+            Expand-Archive -Path $outputPath -DestinationPath $extractPath -Force | Out-Null
+            Remove-Item $outputPath -Force | Out-Null
         }
-        catch {
-            Write-Host "$($colors.Red)[-] Error con $($tool.Name): $_$($colors.Reset)"
-        }
+        Write-Host "$($colors.Green) Listo$($colors.Reset)"
+        return $true
     }
-    
-    return @{
-        Downloaded = $downloaded
-        Directory = $ericDir
+    catch {
+        Write-Host "$($colors.Red) Falló$($colors.Reset)"
+        return $false
+    }
+    finally {
+        $ProgressPreference = 'Continue'
     }
 }
 
+# Función para descargar categorías de herramientas
+function Download-Tools {
+    param([array]$Tools, [string]$CategoryName, [string]$DownloadPath)
+    
+    $successCount = 0
+    
+    Write-Host "`n$($colors.Cyan)[*] Descargando herramientas $CategoryName$($colors.Reset)"
+    foreach ($tool in $Tools) {
+        if (Download-File -Url $tool.Url -FileName $tool.File -ToolName $tool.Name -DownloadPath $DownloadPath) {
+            $successCount++
+        }
+    }
+    
+    Write-Host "$($colors.Cyan)[+] $CategoryName: $successCount/$($Tools.Count) herramientas descargadas exitosamente$($colors.Reset)"
+    return $successCount
+}
 
-function Get-AllTools {
-    Write-Host "$($colors.Cyan)[*] Iniciando descarga completa de herramientas...$($colors.Reset)"
+# Nueva función de descarga con el sistema de Lily
+function Invoke-LilyDownloadSystem {
+    Clear-Host
     
-    Write-Host "`n$($colors.Yellow)=== NIRSOFT TOOLS ===$($colors.Reset)"
-    $nirsoftResult = Get-NirSoftTools
+    Write-Host @"
+$($colors.Cyan)   
+Discord.gg/ssa
+$($colors.Reset)
+$($colors.White)discord.gg/ssa$($colors.Reset)
+"@
+
+    Write-Host "`n$($colors.Red)[!] ADVERTENCIA: ASEGÚRATE DE TENER EL CONSENTIMIENTO DEL Usuario ANTES DE EJECUTAR,$($colors.Reset)"
+    Write-Host "$($colors.Red)[!] EL SCRIPT AGREGARÁ C:\SCREENSHARE A LAS EXCLUSIONES DEL ANTIVIRUS.$($colors.Reset)"
+    Write-Host ""
     
-    Write-Host "`n$($colors.Yellow)=== ERIC ZIMMERMAN TOOLS ===$($colors.Reset)"
-    $ericResult = Get-EricZimmermanTools
+
+    if (-not $global:isAdmin) {
+        Write-Host "$($colors.Yellow)[!] Esta función requiere privilegios de administrador.$($colors.Reset)"
+        Write-Host "$($colors.Yellow)[*] Solicitando permisos de administrador...$($colors.Reset)"
+        
+        try {
+            $scriptContent = Get-Content $MyInvocation.MyCommand.Path -Raw
+            $bytes = [System.Text.Encoding]::Unicode.GetBytes($scriptContent)
+            $encodedCommand = [Convert]::ToBase64String($bytes)
+            
+            Start-Process PowerShell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -EncodedCommand $encodedCommand"
+            Write-Host "$($colors.Green)[+] Script reiniciado como administrador$($colors.Reset)"
+            exit
+        }
+        catch {
+            Write-Host "$($colors.Red)[!] No se pudieron obtener privilegios de administrador.$($colors.Reset)"
+            Write-Host "$($colors.White)[*] Presiona Enter para continuar...$($colors.Reset)"
+            $null = Read-Host
+            return
+        }
+    }
     
-    Write-Host "`n$($colors.Green)$('='*50)$($colors.Reset)"
-    Write-Host "$($colors.Green)[+] DESCARGA COMPLETADA$($colors.Reset)"
-    Write-Host "$($colors.Green)$('='*50)$($colors.Reset)"
-    Write-Host "$($colors.White)  • NirSoft: $($nirsoftResult.Downloaded) herramientas en '$($nirsoftResult.Directory)'$($colors.Reset)"
-    Write-Host "$($colors.White)  • Eric Zimmerman: $($ericResult.Downloaded) herramientas en '$($ericResult.Directory)'$($colors.Reset)"
-    Write-Host "`n$($colors.Cyan)[*] Todas las herramientas se han guardado en sus respectivas carpetas.$($colors.Reset)"
+    $DownloadPath = "C:\Screenshare"
+    if (!(Test-Path $DownloadPath)) {
+        New-Item -ItemType Directory -Path $DownloadPath -Force | Out-Null
+        Write-Host "$($colors.Green)[+] Carpeta creada: $DownloadPath$($colors.Reset)"
+    }
+    
+
+    $exclusionAdded = Add-DefenderExclusion -DownloadPath $DownloadPath
+    
+    if (-not $exclusionAdded) {
+        Write-Host "`n$($colors.Yellow)[!] No se pudo agregar la exclusión automática del antivirus.$($colors.Reset)"
+        Write-Host "$($colors.Yellow)[*] Continuando con las descargas (algunas podrían ser eliminadas)$($colors.Reset)"
+        Start-Sleep -Seconds 3
+    }
+    
+
+    $spokwnTools = @(
+        @{ Name="Kernel Live Dump Analyzer Parser"; Url="https://github.com/spokwn/KernelLiveDumpTool/releases/download/v1.1/KernelLiveDumpTool.exe"; File="KernelLiveDumpTool.exe" },
+        @{ Name="BAM Parser"; Url="https://github.com/spokwn/BAM-parser/releases/download/v1.2.9/BAMParser.exe"; File="BAMParser.exe" },
+        @{ Name="Paths Parser"; Url="https://github.com/spokwn/PathsParser/releases/download/v1.2/PathsParser.exe"; File="PathsParser.exe" },
+        @{ Name="JournalTrace"; Url="https://github.com/spokwn/JournalTrace/releases/download/1.2/JournalTrace.exe"; File="JournalTrace.exe" },
+        @{ Name="Tool"; Url="https://github.com/spokwn/Tool/releases/download/v1.1.3/espouken.exe"; File="espouken.exe" },
+        @{ Name="PcaSvc Executed"; Url="https://github.com/spokwn/pcasvc-executed/releases/download/v0.8.7/PcaSvcExecuted.exe"; File="PcaSvcExecuted.exe" },
+        @{ Name="BAM Deleted Keys"; Url="https://github.com/spokwn/BamDeletedKeys/releases/download/v1.0/BamDeletedKeys.exe"; File="BamDeletedKeys.exe" },
+        @{ Name="Prefetch Parser"; Url="https://github.com/spokwn/prefetch-parser/releases/download/v1.5.5/PrefetchParser.exe"; File="PrefetchParser.exe" },
+        @{ Name="Activities Cache Parser"; Url="https://github.com/spokwn/ActivitiesCache-execution/releases/download/v0.6.5/ActivitiesCacheParser.exe"; File="ActivitiesCacheParser.exe" }
+    )
+
+    $zimmermanTools = @(
+        @{ Name="AmcacheParser"; Url="https://download.ericzimmermanstools.com/net9/AmcacheParser.zip"; File="AmcacheParser.zip" },
+        @{ Name="AppCompatCacheParser"; Url="https://download.ericzimmermanstools.com/net9/AppCompatCacheParser.zip"; File="AppCompatCacheParser.zip" },
+        @{ Name="JumpListExplorer"; Url="https://download.ericzimmermanstools.com/net9/JumpListExplorer.zip"; File="JumpListExplorer.zip" },
+        @{ Name="bstrings"; Url="https://download.ericzimmermanstools.com/net9/bstrings.zip"; File="bstrings.zip" },
+        @{ Name="PECmd"; Url="https://download.ericzimmermanstools.com/net9/PECmd.zip"; File="PECmd.zip" },
+        @{ Name="SrumECmd"; Url="https://download.ericzimmermanstools.com/net9/SrumECmd.zip"; File="SrumECmd.zip" },
+        @{ Name="TimelineExplorer"; Url="https://download.ericzimmermanstools.com/net9/TimelineExplorer.zip"; File="TimelineExplorer.zip" },
+        @{ Name="RegistryExplorer"; Url="https://download.ericzimmermanstools.com/net9/RegistryExplorer.zip"; File="RegistryExplorer.zip" },
+        @{ Name="MFTECmd"; Url="https://download.ericzimmermanstools.com/net9/MFTECmd.zip"; File="MFTECmd.zip"}
+    )
+
+    $nirsoftTools = @(
+        @{ Name="WinPrefetchView"; Url="https://www.nirsoft.net/utils/winprefetchview-x64.zip"; File="winprefetchview-x64.zip" },
+        @{ Name="USBDeview"; Url="https://www.nirsoft.net/utils/usbdeview-x64.zip"; File="usbdeview-x64.zip" },
+        @{ Name="NetworkUsageView"; Url="https://www.nirsoft.net/utils/networkusageview-x64.zip"; File="networkusageview-x64.zip" },
+        @{ Name="AlternateStreamView"; Url="https://www.nirsoft.net/utils/alternatestreamview-x64.zip"; File="alternatestreamview-x64.zip" },
+        @{ Name="UninstallView"; Url="https://www.nirsoft.net/utils/uninstallview-x64.zip"; File="uninstallview-x64.zip" },
+        @{ Name="PreviousFilesRecovery"; Url="https://www.nirsoft.net/utils/previousfilesrecovery-x64.zip"; File="previousfilesrecovery-x64.zip" }
+    )
+
+    $OrbdiffTools = @(
+        @{ Name="Fileless"; Url="https://github.com/Orbdiff/Fileless/releases/download/v1.1/Fileless.exe"; File="Fileless.exe" },
+        @{ Name="JARParser"; Url="https://github.com/Orbdiff/JARParser/releases/download/v1.2/JARParser.exe"; File="JARParser.exe" },
+        @{ Name="PFTrace"; Url="https://github.com/Orbdiff/PFTrace/releases/download/v1.0.1/PFTrace.exe"; File="PFTrace.exe" },
+        @{ Name="Prefetchview++"; Url="https://github.com/Orbdiff/PrefetchView/releases/download/v1.4/PrefetchView++.exe"; File="PrefetchView++.exe" }
+    )
+
+    $otherTools = @(
+        @{ Name="System Informer"; Url="https://github.com/winsiderss/si-builds/releases/download/3.2.25297.1516/systeminformer-build-canary-setup.exe"; File="systeminformer-build-canary-setup.exe" },
+        @{ Name="Everything Search"; Url="https://www.voidtools.com/Everything-1.4.1.1029.x86-Setup.exe"; File="Everything-1.4.1.1029.x86-Setup.exe" },
+        @{ Name="FTK Imager"; Url="https://d1kpmuwb7gvu1i.cloudfront.net/AccessData_FTK_Imager_4.7.1.exe"; File="AccessData_FTK_Imager_4.7.1.exe" }
+    )
+    
+
+    Write-Host "`n$($colors.Cyan)[*] Sistema de descargas de herramientas forenses$($colors.Reset)"
+    Write-Host "$($colors.Cyan)[*] Todas las herramientas se guardarán en: $DownloadPath$($colors.Reset)"
+    Write-Host ""
+    
+    $totalDownloaded = 0
+    
+    $response = Read-Host "$($colors.Yellow)[?] ¿Quieres descargar las herramientas de Spokwn? (S/N)$($colors.Reset)"
+    if ($response -match '^[SsYy]') {
+        $count = Download-Tools -Tools $spokwnTools -CategoryName "Spokwn" -DownloadPath $DownloadPath
+        $totalDownloaded += $count
+    }
+    
+    $response = Read-Host "`n$($colors.Yellow)[?] ¿Quieres descargar las herramientas de Orbdiff? (S/N)$($colors.Reset)"
+    if ($response -match '^[SsYy]') {
+        $count = Download-Tools -Tools $OrbdiffTools -CategoryName "Orbdiff" -DownloadPath $DownloadPath
+        $totalDownloaded += $count
+    }
+    
+    $response = Read-Host "`n$($colors.Yellow)[?] ¿Quieres descargar las herramientas de Zimmerman? (S/N)$($colors.Reset)"
+    if ($response -match '^[SsYy]') {
+        $count = Download-Tools -Tools $zimmermanTools -CategoryName "Zimmerman" -DownloadPath $DownloadPath
+        
+        $runtimeResponse = Read-Host "$($colors.Yellow)[?] ¿Quieres instalar el .NET Runtime (requerido para Zimmerman)? (S/N)$($colors.Reset)"
+        if ($runtimeResponse -match '^[SsYy]') {
+            Download-File -Url "https://builds.dotnet.microsoft.com/dotnet/Sdk/9.0.306/dotnet-sdk-9.0.306-win-x64.exe" -FileName "dotnet-sdk-9.0.306-win-x64.exe" -ToolName ".NET Runtime" -DownloadPath $DownloadPath
+            $totalDownloaded++
+        }
+        $totalDownloaded += $count
+    }
+    
+    $response = Read-Host "`n$($colors.Yellow)[?] ¿Quieres descargar las herramientas de Nirsoft? (S/N)$($colors.Reset)"
+    if ($response -match '^[SsYy]') {
+        $count = Download-Tools -Tools $nirsoftTools -CategoryName "Nirsoft" -DownloadPath $DownloadPath
+        $totalDownloaded += $count
+    }
+    
+    Write-Host "`n$($colors.Yellow)[!] NOTA: Hayabusa puede ser detectado como virus (es seguro y de código abierto)$($colors.Reset)"
+    $response = Read-Host "$($colors.Yellow)[?] ¿Quieres descargar Hayabusa? (S/N)$($colors.Reset)"
+    if ($response -match '^[SsYy]') {
+        if (Download-File -Url "https://github.com/Yamato-Security/hayabusa/releases/download/v3.6.0/hayabusa-3.6.0-win-x64.zip" -FileName "hayabusa-3.6.0-win-x64.zip" -ToolName "Hayabusa" -DownloadPath $DownloadPath) {
+            $totalDownloaded++
+        }
+    }
+    
+    $response = Read-Host "`n$($colors.Yellow)[?] ¿Quieres descargar otras herramientas comunes? (S/N)$($colors.Reset)"
+    if ($response -match '^[SsYy]') {
+        $count = Download-Tools -Tools $otherTools -CategoryName "Otras herramientas" -DownloadPath $DownloadPath
+        $totalDownloaded += $count
+    }
+    
+    Write-Host "`n$($colors.Green)[+] Descarga completada!$($colors.Reset)"
+    Write-Host "$($colors.Cyan)[*] Total de herramientas descargadas: $totalDownloaded$($colors.Reset)"
+    
+    $response = Read-Host "`n$($colors.Yellow)[?] ¿Quieres abrir la carpeta $DownloadPath? (S/N)$($colors.Reset)"
+    if ($response -match '^[SsYy]') {
+        Start-Process $DownloadPath
+    }
+    
+    Write-Host "`n$($colors.Cyan)[*] Las descargas se encuentran en: $DownloadPath$($colors.Reset)"
+    Write-Host "$($colors.White)[*] Presiona Enter para continuar...$($colors.Reset)"
+    $null = Read-Host
 }
 
 # Función Kill Screen Processes (Script by diff)
@@ -380,17 +471,15 @@ function Show-Menu {
     Show-Banner
     
     Write-Host "`n$($colors.Cyan)$('='*60)$($colors.Reset)"
-    Write-Host "$($colors.Cyan)         SCREENSHARE TOOLKIT - MENÚ PRINCIPAL$($colors.Reset)"
+    Write-Host "$($colors.Cyan)         SCREENSHARE - MENÚ PRINCIPAL$($colors.Reset)"
     Write-Host "$($colors.Cyan)$('='*60)$($colors.Reset)"
     
     do {
         Write-Host "`n$($colors.White)Selecciona una opción:$($colors.Reset)"
-        Write-Host "$($colors.Cyan)1.$($colors.Reset) Ejecutar Doomsday Fucker (Requiere Admin)"
-        Write-Host "$($colors.Cyan)2.$($colors.Reset) Descargar NirSoft Tools"
-        Write-Host "$($colors.Cyan)3.$($colors.Reset) Descargar Eric Zimmerman Tools"
-        Write-Host "$($colors.Cyan)4.$($colors.Reset) Descargar todas las herramientas"
-        Write-Host "$($colors.Cyan)5.$($colors.Reset) Kill Screen Processes (by Diff)"
-        Write-Host "$($colors.Cyan)6.$($colors.Reset) Salir"
+        Write-Host "$($colors.Cyan)1.$($colors.Reset) Ejecutar Doomsday Fucker"
+        Write-Host "$($colors.Cyan)2.$($colors.Reset) Sistema de descargas"
+        Write-Host "$($colors.Cyan)3.$($colors.Reset) Kill Screen Processes (by Diff)"
+        Write-Host "$($colors.Cyan)4.$($colors.Reset) Salir"
         Write-Host "$($colors.Cyan)$('-'*60)$($colors.Reset)"
         
         $choice = Read-Host "`n$($colors.Yellow)Opción$($colors.Reset)"
@@ -402,26 +491,16 @@ function Show-Menu {
                 Invoke-DoomsdayFucker
             }
             "2" {
-                Write-Host "`n$($colors.Yellow)[*] Descargando NirSoft Tools...$($colors.Reset)"
-                $result = Get-NirSoftTools
-                Write-Host "$($colors.Green)[+] Descargadas: $($result.Downloaded), Fallidas: $($result.Failed)$($colors.Reset)"
-                Write-Host "$($colors.Green)[+] Carpeta: $($result.Directory)$($colors.Reset)"
+                Invoke-LilyDownloadSystem
+                Show-Banner
+                continue
             }
             "3" {
-                Write-Host "`n$($colors.Yellow)[*] Descargando Eric Zimmerman Tools...$($colors.Reset)"
-                $result = Get-EricZimmermanTools
-                Write-Host "$($colors.Green)[+] Descargadas: $($result.Downloaded)$($colors.Reset)"
-                Write-Host "$($colors.Green)[+] Carpeta: $($result.Directory)$($colors.Reset)"
-            }
-            "4" {
-                Get-AllTools
-            }
-            "5" {
                 Invoke-KillScreenProcesses
                 Show-Banner
                 continue
             }
-            "6" {
+            "4" {
                 Write-Host "`n$($colors.Green)[+] Saliendo... ¡Hasta pronto!$($colors.Reset)"
                 break
             }
@@ -430,12 +509,12 @@ function Show-Menu {
             }
         }
         
-        if ($choice -ne "6") {
+        if ($choice -ne "4" -and $choice -ne "2" -and $choice -ne "3") {
             Write-Host "`n$($colors.White)Presiona Enter para continuar...$($colors.Reset)"
             $null = Read-Host
             Show-Banner
         }
-    } while ($choice -ne "6")
+    } while ($choice -ne "4")
     
     Write-Host "`n$($colors.Cyan)$('='*60)$($colors.Reset)"
     Write-Host "$($colors.Cyan)               discord.gg/ssa$($colors.Reset)"
@@ -444,10 +523,10 @@ function Show-Menu {
 
 
 function Main {
- 
+
     [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
     
-  
+ 
     $global:isAdmin = Test-Administrator
     
     try {
