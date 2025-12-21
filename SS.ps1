@@ -1,4 +1,4 @@
-agrega en las herramientras de nirsoft lastactivityview userassistview  y otras 3 de nirsoft que se te pinten pero que sirvan en una screenshare
+
 
 # discord.gg/ssa 
 
@@ -1283,3 +1283,4 @@ function Main {
 }
 
 Main
+
