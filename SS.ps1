@@ -1,6 +1,6 @@
 # discord.gg/ssa 
 
-$global:version = "2.1.0"
+$global:version = "2.2.0"
 $global:isAdmin = $false
 
 
@@ -40,10 +40,242 @@ function Show-Banner {
     Clear-Host
     Write-Host ""
     Write-Host "========================================================" -ForegroundColor Cyan
-    Write-Host "              SCREENSHARE ALLIANCE  v$global:version" -ForegroundColor Cyan
+    Write-Host "           SCREENSHARE ALLIANCE v$global:version" -ForegroundColor Cyan
     Write-Host "                discord.gg/ssa" -ForegroundColor Cyan
     Write-Host "========================================================" -ForegroundColor Cyan
     Write-Host ""
+}
+
+
+function Invoke-BamParser {
+    Clear-Host
+    
+    Write-Host ""
+    Write-Host "========================================================" -ForegroundColor Red
+    Write-Host "                    SCREENSHARE ALLIANCE" -ForegroundColor Red
+    Write-Host "                    discord.gg/ssa" -ForegroundColor Red
+    Write-Host "========================================================" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "  Join our Discord discord.gg/ssa  " -NoNewline
+    Write-Host "discord.gg/ssa" -ForegroundColor Red
+    Write-Host ""
+    
+
+    if (-not $global:isAdmin) {
+        Write-Color "[!] Esta herramienta requiere permisos de administrador" "Red"
+        Write-Color "[*] Por favor, ejecuta este script como administrador" "Yellow"
+        Write-Host ""
+        Write-Color "[*] Presiona Enter para continuar..." "White"
+        $null = Read-Host
+        return
+    }
+    
+ 
+    function Get-Signature {
+        [CmdletBinding()]
+        param (
+            [string[]]$FilePath
+        )
+
+        $Existence = Test-Path -PathType "Leaf" -Path $FilePath
+        $Authenticode = (Get-AuthenticodeSignature -FilePath $FilePath -ErrorAction SilentlyContinue).Status
+        $Signature = "Invalid Signature (UnknownError)"
+
+        if ($Existence) {
+            if ($Authenticode -eq "Valid") {
+                $Signature = "Valid Signature"
+            }
+            elseif ($Authenticode -eq "NotSigned") {
+                $Signature = "Invalid Signature (NotSigned)"
+            }
+            elseif ($Authenticode -eq "HashMismatch") {
+                $Signature = "Invalid Signature (HashMismatch)"
+            }
+            elseif ($Authenticode -eq "NotTrusted") {
+                $Signature = "Invalid Signature (NotTrusted)"
+            }
+            elseif ($Authenticode -eq "UnknownError") {
+                $Signature = "Invalid Signature (UnknownError)"
+            }
+            return $Signature
+        } else {
+            $Signature = "File Was Not Found"
+            return $Signature
+        }
+    }
+    
+
+    $sw = [Diagnostics.Stopwatch]::StartNew()
+    
+    Write-Color "[*] Analizando claves BAM del registro..." "Yellow"
+    Write-Host ""
+    
+
+    if (!(Get-PSDrive -Name HKLM -PSProvider Registry)){
+        try {
+            New-PSDrive -Name HKLM -PSProvider Registry -Root HKEY_LOCAL_MACHINE | Out-Null
+            Write-Color "[+] Unidad del registro montada" "Green"
+        }
+        catch {
+            Write-Color "[!] Error montando HKEY_LOCAL_MACHINE" "Red"
+            Write-Host ""
+            Write-Color "[*] Presiona Enter para continuar..." "White"
+            $null = Read-Host
+            return
+        }
+    }
+    
+
+    $bv = ("bam", "bam\State")
+    
+
+    try {
+        $Users = foreach($ii in $bv){
+            Get-ChildItem -Path "HKLM:\SYSTEM\CurrentControlSet\Services\$($ii)\UserSettings\" -ErrorAction SilentlyContinue | 
+            Select-Object -ExpandProperty PSChildName
+        }
+        
+        if (-not $Users) {
+            Write-Color "[!] No se encontraron entradas BAM en el registro" "Yellow"
+            Write-Color "[*] Es posible que tu versión de Windows no sea compatible" "Yellow"
+            Write-Host ""
+            Write-Color "[*] Presiona Enter para continuar..." "White"
+            $null = Read-Host
+            return
+        }
+    }
+    catch {
+        Write-Color "[!] Error analizando clave BAM" "Red"
+        Write-Color "[*] Versión de Windows posiblemente no compatible" "Yellow"
+        Write-Host ""
+        Write-Color "[*] Presiona Enter para continuar..." "White"
+        $null = Read-Host
+        return
+    }
+    
+    $rpath = @("HKLM:\SYSTEM\CurrentControlSet\Services\bam\","HKLM:\SYSTEM\CurrentControlSet\Services\bam\state\")
+
+
+    $UserTime = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation" -ErrorAction SilentlyContinue).TimeZoneKeyName
+    $UserBias = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation" -ErrorAction SilentlyContinue).ActiveTimeBias
+    $UserDay = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation" -ErrorAction SilentlyContinue).DaylightBias
+
+
+    $BamResults = @()
+    $totalUsers = $Users.Count
+    $currentUser = 0
+    
+    foreach ($Sid in $Users) {
+        $currentUser++
+        Write-Color "[*] Procesando usuario $currentUser/$totalUsers..." "Cyan"
+        
+        foreach($rp in $rpath){
+            $pathToCheck = "$($rp)UserSettings\$Sid"
+            Write-Color "  Analizando: $pathToCheck" "White"
+            
+            try {
+                $BamItems = Get-Item -Path $pathToCheck -ErrorAction SilentlyContinue | 
+                           Select-Object -ExpandProperty Property
+                
+                if ($BamItems) {
+               
+                    $User = ""
+                    try {
+                        $objSID = New-Object System.Security.Principal.SecurityIdentifier($Sid)
+                        $User = $objSID.Translate([System.Security.Principal.NTAccount]).Value
+                    }
+                    catch {
+                        $User = "Unknown"
+                    }
+                    
+                    foreach ($Item in $BamItems) {
+                        $Key = Get-ItemProperty -Path $pathToCheck -ErrorAction SilentlyContinue | 
+                              Select-Object -ExpandProperty $Item
+                        
+                        if ($key -and $key.length -eq 24) {
+                            $Hex = [System.BitConverter]::ToString($key[7..0]) -replace "-",""
+                            $TimeLocal = Get-Date ([DateTime]::FromFileTime([Convert]::ToInt64($Hex, 16))) -Format "yyyy-MM-dd HH:mm:ss"
+                            $TimeUTC = Get-Date ([DateTime]::FromFileTimeUtc([Convert]::ToInt64($Hex, 16))) -Format "yyyy-MM-dd HH:mm:ss"
+                            $Bias = -([convert]::ToInt32([Convert]::ToString($UserBias,2),2))
+                            $Day = -([convert]::ToInt32([Convert]::ToString($UserDay,2),2)) 
+                            $Biasd = $Bias/60
+                            $Dayd = $Day/60
+                            $TimeUser = (Get-Date ([DateTime]::FromFileTimeUtc([Convert]::ToInt64($Hex, 16))).addminutes($Bias) -Format "yyyy-MM-dd HH:mm:ss") 
+                            
+                       
+                            $d = if((((split-path -path $item) | ConvertFrom-String -Delimiter "\\").P3) -match '\d{1}') {
+                                ((split-path -path $item).Remove(23)).trimstart("\Device\HarddiskVolume")
+                            } else { "" }
+                            
+                            $f = if((((split-path -path $item) | ConvertFrom-String -Delimiter "\\").P3) -match '\d{1}') {
+                                Split-path -leaf ($item).TrimStart()
+                            } else { $item }	
+                            
+                            $cp = if((((split-path -path $item) | ConvertFrom-String -Delimiter "\\").P3) -match '\d{1}') {
+                                ($item).Remove(1,23)
+                            } else { "" }
+                            
+                            $path = if((((split-path -path $item) | ConvertFrom-String -Delimiter "\\").P3) -match '\d{1}') {
+                                Join-Path -Path "C:" -ChildPath $cp
+                            } else { "" }			
+                            
+                            $sig = if((((split-path -path $item) | ConvertFrom-String -Delimiter "\\").P3) -match '\d{1}') {
+                                Get-Signature -FilePath $path
+                            } else { "" }
+                            
+                       
+                            $BamResults += [PSCustomObject]@{
+                                'Examiner Time' = $TimeLocal
+                                'Last Execution Time (UTC)' = $TimeUTC
+                                'Last Execution User Time' = $TimeUser
+                                'Application' = $f
+                                'Path' = $path
+                                'Signature' = $sig
+                                'User' = $User
+                                'SID' = $Sid
+                                'Regpath' = $rp
+                            }
+                        }
+                    }
+                }
+            }
+            catch {
+                Write-Color "  [!] Error procesando ruta" "Red"
+            }
+        }
+    }
+    
+
+    $sw.Stop()
+    $t = [math]::Round($sw.Elapsed.TotalMinutes, 2)
+    
+    if ($BamResults.Count -gt 0) {
+        Write-Color "`n[+] Análisis completado" "Green"
+        Write-Color "[*] Se encontraron $($BamResults.Count) entradas BAM" "Cyan"
+        Write-Color "[*] Zona horaria: $UserTime" "Cyan"
+        Write-Color "[*] Tiempo de ejecución: $t minutos" "Yellow"
+        Write-Host ""
+        
+  
+        try {
+            $BamResults | Out-GridView -Title "BAM Parser - $($BamResults.Count) entradas encontradas | Zona horaria: $UserTime | Tiempo: $t minutos" -PassThru
+        }
+        catch {
+            Write-Color "[!] No se pudo mostrar la interfaz gráfica" "Red"
+            Write-Color "[*] Mostrando primeros 10 resultados en consola:" "Yellow"
+            Write-Host ""
+            
+            $BamResults | Select-Object -First 10 | Format-Table -AutoSize
+        }
+    }
+    else {
+        Write-Color "[!] No se encontraron datos BAM" "Yellow"
+        Write-Color "[*] Tiempo de ejecución: $t minutos" "Yellow"
+    }
+    
+    Write-Host ""
+    Write-Color "[*] Presiona Enter para continuar..." "White"
+    $null = Read-Host
 }
 
 
@@ -102,7 +334,7 @@ function Show-PrefetchMenu {
                 Write-Color "  Descargando..." "White" -NoNewline
                 Invoke-WebRequest -Uri $url -OutFile $outputFile -UseBasicParsing | Out-Null
                 
-              
+           
                 Expand-Archive -Path $outputFile -DestinationPath $downloadPath -Force | Out-Null
                 Remove-Item $outputFile -Force | Out-Null
                 
@@ -270,7 +502,7 @@ function Invoke-DownloadAllTools {
     Write-Color "[!] Esto puede tomar varios minutos" "Yellow"
     Write-Host ""
     
-  
+
     $mainPath = "C:\Screenshare"
     if (!(Test-Path $mainPath)) {
         New-Item -ItemType Directory -Path $mainPath -Force | Out-Null
@@ -401,7 +633,7 @@ function Invoke-DownloadNirsoftTools {
             $outputFile = "$downloadPath\$($tool.Name).zip"
             Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
             
-          
+      
             Expand-Archive -Path $outputFile -DestinationPath $downloadPath -Force | Out-Null
             Remove-Item $outputFile -Force | Out-Null
             
@@ -705,15 +937,16 @@ function Show-MainMenu {
     Write-Host "========================================================" -ForegroundColor Cyan
     Write-Host ""
     
-    Write-Color "[1]    Herramientas de Prefetch" "Cyan"
-    Write-Color "[2]   Descargar SS Tools" "Cyan"
-    Write-Color "[3]   JarParser" "Cyan"
-    Write-Color "[4]   Kill Screen Processes" "Cyan"
-    Write-Color "[5]   Salir" "Cyan"
+    Write-Color "[1] 🛠️  Herramientas de Prefetch" "Cyan"
+    Write-Color "[2] 📥 Descargar SS Tools" "Cyan"
+    Write-Color "[3] 🔍 Bam-Parser (Analizador BAM)" "Cyan"
+    Write-Color "[4] ⚡ JarParser" "Cyan"
+    Write-Color "[5] 🎯 Kill Screen Processes" "Cyan"
+    Write-Color "[6] 🚪 Salir" "Cyan"
     Write-Host ""
     Write-Host "--------------------------------------------------------" -ForegroundColor Gray
     
-    $choice = Read-Host "[?] Selecciona opción (1-5)"
+    $choice = Read-Host "[?] Selecciona opción (1-6)"
     
     switch ($choice) {
         "1" {
@@ -725,14 +958,18 @@ function Show-MainMenu {
             Show-MainMenu
         }
         "3" {
-            Invoke-JarParser
+            Invoke-BamParser
             Show-MainMenu
         }
         "4" {
-            Invoke-KillScreenProcesses
+            Invoke-JarParser
             Show-MainMenu
         }
         "5" {
+            Invoke-KillScreenProcesses
+            Show-MainMenu
+        }
+        "6" {
             Write-Host ""
             Write-Color "[+] Saliendo... ¡Hasta pronto!" "Green"
             Write-Host ""
