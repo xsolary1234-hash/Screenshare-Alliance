@@ -1215,7 +1215,7 @@ function Show-ScriptsMenu {
     
     Write-Menu "[1] 📊 Bam-Parser" -IsOption
     Write-Menu "[2] 📦 JarParser" -IsOption
-    Write-Menu "[3] 🔧 Services Script (Análisis de Servicios)" -IsOption
+    Write-Menu "[3] 🔧 Services " -IsOption
     Write-Menu "[4] 🎯 Kill Screen Processes" -IsOption
     Write-Menu "[5] 🔙 Volver al menú principal" -IsOption
     Write-Host ""
@@ -1714,3 +1714,4 @@ function Main {
 }
 
 Main
+
