@@ -1,6 +1,6 @@
 # discord.gg/ssa 
 
-$global:version = "1.0"
+$global:version = "2.3.0"
 $global:isAdmin = $false
 
 
@@ -1203,18 +1203,16 @@ function Invoke-KillScreenProcesses {
     $null = Read-Host
 }
 
-
-
 function Invoke-JarParserByDiff {
     Clear-Host
     
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
-    Write-Menu "               JARPARSER (By Diff)" -IsTitle
+    Write-Menu "               JAR PARSER (By Diff)" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
-    Write-Color "[*] Preparando JARParser..." "Yellow"
+    Write-Color "[*] Preparando JARParser (By Diff)..." "Yellow"
     
     $ProgressPreference = 'SilentlyContinue'
 
@@ -1355,6 +1353,171 @@ public class TokenManipulator {
 
 
 
+function Invoke-DllParser {
+    Clear-Host
+    
+    $SS = @"                                                                
+      _/_/    _/  _/  _/                                         
+   _/    _/  _/  _/        _/_/_/  _/_/_/      _/_/_/    _/_/    
+  _/_/_/_/  _/  _/  _/  _/    _/  _/    _/  _/        _/_/_/_/   
+ _/    _/  _/  _/  _/  _/    _/  _/    _/  _/        _/          
+_/    _/  _/  _/  _/    _/_/_/  _/    _/    _/_/_/    _/_/_/     
+"@
+    Write-Host $SS -ForegroundColor Magenta
+    
+    Write-Host ""
+    Write-Menu "========================================================" -IsTitle
+    Write-Menu "                  DLL PARSER " -IsTitle
+    Write-Menu "========================================================" -IsTitle
+    Write-Host ""
+    
+    Write-Color "[*] Iniciando DLL Parser..." "Yellow"
+    
+    $ProgressPreference = 'SilentlyContinue'
+
+    $pecmdUrl = "https://github.com/NoDiff-del/JARs/releases/download/Jar/PECmd.exe"
+    $pecmdPath = "$env:TEMP\PECmd.exe"
+
+    Write-Color "  Descargando PECmd.exe..." "White" -NoNewline
+    try {
+        Invoke-WebRequest -Uri $pecmdUrl -OutFile $pecmdPath -UseBasicParsing
+        Write-Color " OK" "Green"
+    } catch {
+        Write-Color " ERROR" "Red"
+        Write-Color "[!] No se pudo descargar PECmd.exe" "Red"
+        Write-Host ""
+        Write-Color "[*] Presiona Enter para continuar..." "White"
+        $null = Read-Host
+        return
+    }
+
+    if (-not (Test-Path $pecmdPath)) {
+        Write-Color "[!] Error: PECmd.exe no se descargó correctamente" "Red"
+        Write-Host ""
+        Write-Color "[*] Presiona Enter para continuar..." "White"
+        $null = Read-Host
+        return
+    }
+
+    Write-Color "  Obteniendo tiempo de inicio del sistema..." "White" -NoNewline
+    try {
+        $logonTime = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
+        Write-Color " OK" "Green"
+        Write-Color "  Último inicio: $($logonTime.ToString('yyyy-MM-dd HH:mm:ss'))" "White"
+    } catch {
+        Write-Color " ERROR" "Red"
+        Write-Color "[!] No se pudo obtener el tiempo de inicio del sistema" "Red"
+        $logonTime = (Get-Date).AddDays(-1)
+    }
+
+    $prefetchFolder = "C:\Windows\Prefetch"
+    
+    if (-not (Test-Path $prefetchFolder)) {
+        Write-Color "[!] Error: No se encontró la carpeta Prefetch" "Red"
+        Write-Color "  Ruta: $prefetchFolder" "White"
+        Write-Host ""
+        Write-Color "[*] Presiona Enter para continuar..." "White"
+        $null = Read-Host
+        return
+    }
+
+    Write-Color "  Buscando archivos PF de rundll32/regsvr32..." "White" -NoNewline
+    $files = Get-ChildItem -Path $prefetchFolder -Filter *.pf | Where-Object {
+        ($_.Name -match "rundll32|regsvr32") -and ($_.LastWriteTime -gt $logonTime)
+    } | Sort-Object LastWriteTime -Descending
+
+    if ($files.Count -gt 0) {
+        Write-Color " OK ($($files.Count) encontrados)" "Green"
+        Write-Host ""
+        Write-Color "Archivos PF encontrados después del tiempo de inicio:" -ForegroundColor Gray
+        Write-Host ""
+        
+        $fileCount = 0
+        foreach ($file in $files) {
+            $fileCount++
+            Write-Color "Archivo #$fileCount" -ForegroundColor Cyan
+            Write-Color "  Nombre: $($file.Name)" -ForegroundColor White
+            Write-Color "  Fecha creación PF: $($file.CreationTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Cyan
+            Write-Color "  Última modificación: $($file.LastWriteTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Cyan
+            Write-Color "  Tamaño: $([math]::Round($file.Length/1KB, 2)) KB" -ForegroundColor Cyan
+
+            try {
+                Write-Color "  Ejecutando PECmd.exe..." "White" -NoNewline
+                $pecmdOutput = & $pecmdPath -f $file.FullName
+                Write-Color " OK" "Green"
+            } catch {
+                Write-Color " ERROR" "Red"
+                Write-Color "[!] Error ejecutando PECmd.exe en $($file.Name): $_" "Red"
+                Write-Host ""
+                continue
+            }
+
+            $filteredImports = $pecmdOutput | Where-Object { $_ -match '\\VOLUME|:\\\\' }
+            
+            if ($filteredImports.Count -gt 0) {
+                Write-Color "  Imports encontrados:" -ForegroundColor DarkYellow
+                
+                $importCount = 0
+                foreach ($lineRaw in $filteredImports) {
+                    $line = $lineRaw
+                    if ($line -match '\\VOLUME{(.+?)}') {
+                        $line = $line -replace '\\VOLUME{(.+?)}', 'C:'
+                    }
+                    $line = $line -replace '^\d+: ', ''
+                    $line = $line.Trim()
+
+                    if ($line -match '\\[^\\]+\.[^\\]+$') {
+                        $importCount++
+                        
+                        if (Test-Path $line) {
+                            $sig = Get-AuthenticodeSignature -FilePath $line -ErrorAction SilentlyContinue
+                            if ($sig.Status -eq 'Valid') {
+                                Write-Host "    [$importCount] [FIRMADO] $line" -ForegroundColor Green
+                            } else {
+                                Write-Host "    [$importCount] [SIN FIRMA] $line" -ForegroundColor Red
+                                
+                                if ($sig.Status -eq 'NotSigned') {
+                                    Write-Host "        Estado: No firmado" -ForegroundColor Yellow
+                                } elseif ($sig.Status -eq 'HashMismatch') {
+                                    Write-Host "        Estado: Hash no coincide" -ForegroundColor Red
+                                } elseif ($sig.Status -eq 'NotTrusted') {
+                                    Write-Host "        Estado: No confiable" -ForegroundColor Yellow
+                                } else {
+                                    Write-Host "        Estado: $($sig.Status)" -ForegroundColor Yellow
+                                }
+                            }
+                        } else {
+                            Write-Host "    [$importCount] [NO EXISTE] $line" -ForegroundColor DarkGray
+                        }
+                    }
+                }
+                
+                if ($importCount -eq 0) {
+                    Write-Color "    No se encontraron imports válidos en este archivo." -ForegroundColor Yellow
+                }
+            } else {
+                Write-Color "  No se encontraron imports para el archivo $($file.Name)." -ForegroundColor Yellow
+            }
+            
+            Write-Host ""
+        }
+        
+        Write-Color "[+] Análisis completado. Se encontraron $fileCount archivos PF." "Green"
+    } else {
+        Write-Color " OK (0 encontrados)" "Green"
+        Write-Host ""
+        Write-Color "No se encontraron archivos PF para rundll32.exe o regsvr32.exe modificados después del inicio del sistema." -ForegroundColor Yellow
+        Write-Color "Último inicio del sistema: $($logonTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor White
+    }
+
+    Write-Host ""
+    Write-Color "[*] PECmd.exe descargado en: $pecmdPath" "White"
+    Write-Color "[*] Presiona Enter para continuar..." "White"
+    $null = Read-Host
+}
+
+
+
 function Show-ScriptsMenu {
     Clear-Host
     
@@ -1365,15 +1528,16 @@ function Show-ScriptsMenu {
     Write-Host ""
     
     Write-Menu "[1] 📊 Bam-Parser" -IsOption
-    Write-Menu "[2] 📦 JarParser " -IsOption
-    Write-Menu "[3] 📦 JarParser (By Diff) " -IsOption
-    Write-Menu "[4] 🔧 Services    " -IsOption
+    Write-Menu "[2] 📦 JarParser   " -IsOption
+    Write-Menu "[3] 📦 JarParser (By Diff)" -IsOption
+    Write-Menu "[4] 🔧 Services " -IsOption
     Write-Menu "[5] 🎯 Kill Screen Processes" -IsOption
-    Write-Menu "[6] 🔙 Volver al menú principal" -IsOption
+    Write-Menu "[6] 📂 DLL Parser" -IsOption
+    Write-Menu "[7] 🔙 Volver al menú principal" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
-    $choice = Read-Host "[?] Selecciona opción (1-6)"
+    $choice = Read-Host "[?] Selecciona opción (1-7)"
     
     switch ($choice) {
         "1" {
@@ -1397,6 +1561,10 @@ function Show-ScriptsMenu {
             Show-ScriptsMenu
         }
         "6" {
+            Invoke-DllParser
+            Show-ScriptsMenu
+        }
+        "7" {
             return
         }
         default {
@@ -1418,7 +1586,7 @@ function Invoke-ServicesScript {
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
-
+   
     $isAdmin = [System.Security.Principal.WindowsPrincipal]::new([System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
     if (-not $isAdmin) {
         Write-Host "`n╔══════════════════════════════════════════════════╗" -ForegroundColor Red
