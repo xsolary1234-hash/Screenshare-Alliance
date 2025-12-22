@@ -1204,7 +1204,6 @@ function Invoke-KillScreenProcesses {
 }
 
 
-
 function Show-ScriptsMenu {
     Clear-Host
     
@@ -1216,13 +1215,13 @@ function Show-ScriptsMenu {
     
     Write-Menu "[1] 📊 Bam-Parser" -IsOption
     Write-Menu "[2] 📦 JarParser" -IsOption
-    Write-Menu "[3] 🔧 Services " -IsOption
-    Write-Menu "[4] 🎯 Kill Screen processes" -IsOption
-    Write-Menu "[5] 🔙 Volver al menú principal " -IsOption
+    Write-Menu "[3] 🔧 Services Script (Análisis de Servicios)" -IsOption
+    Write-Menu "[4] 🎯 Kill Screen Processes" -IsOption
+    Write-Menu "[5] 🔙 Volver al menú principal" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
-    $choice = Read-Host "[?] Selecciona opción (1-4)"
+    $choice = Read-Host "[?] Selecciona opción (1-5)"
     
     switch ($choice) {
         "1" {
@@ -1240,7 +1239,7 @@ function Show-ScriptsMenu {
         "4" {
             Invoke-KillScreenProcesses
             Show-ScriptsMenu
-        }  
+        }
         "5" {
             return
         }
@@ -1253,6 +1252,7 @@ function Show-ScriptsMenu {
 }
 
 
+
 function Invoke-ServicesScript {
     Clear-Host
     
@@ -1261,8 +1261,8 @@ function Invoke-ServicesScript {
     Write-Menu "              SCRIPT DE SERVICIOS - SSA" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
+ 
     
-
     $isAdmin = [System.Security.Principal.WindowsPrincipal]::new([System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
     if (-not $isAdmin) {
         Write-Host "`n╔══════════════════════════════════════════════════╗" -ForegroundColor Red
@@ -1643,6 +1643,8 @@ function Invoke-ServicesScript {
     $null = Read-Host
 }
 
+
+
 function Show-MainMenu {
     Show-Banner
     
@@ -1661,7 +1663,7 @@ function Show-MainMenu {
     
     Write-Menu "[1] 🛠️  Herramientas de Prefetch" -IsOption
     Write-Menu "[2] 📥 Descargar SS Tools" -IsOption
-    Write-Menu "[3] 📜 Scripts Útiles" -IsOption  
+    Write-Menu "[3] 📜 Scripts Útiles" -IsOption
     Write-Menu "[4] 🚪 Salir" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
@@ -1678,14 +1680,10 @@ function Show-MainMenu {
             Show-MainMenu
         }
         "3" {
-            Show-ScriptsMenu  
+            Show-ScriptsMenu
             Show-MainMenu
         }
         "4" {
-            Invoke-KillScreenProcesses
-            Show-MainMenu
-        }
-        "5" {
             Write-Host ""
             Write-Color "[+] Saliendo... ¡Hasta pronto!" "Green"
             Write-Host ""
