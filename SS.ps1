@@ -1204,6 +1204,157 @@ function Invoke-KillScreenProcesses {
 }
 
 
+
+function Invoke-JarParserByDiff {
+    Clear-Host
+    
+    Write-Host ""
+    Write-Menu "========================================================" -IsTitle
+    Write-Menu "               JAR PARSER (By Diff)" -IsTitle
+    Write-Menu "========================================================" -IsTitle
+    Write-Host ""
+    
+    Write-Color "[*] Preparando JARParser (By Diff)..." "Yellow"
+    
+    $ProgressPreference = 'SilentlyContinue'
+
+    $folder = "$env:TEMP\JARParserTool"
+    if (-not (Test-Path $folder)) { 
+        Write-Color "  Creando carpeta temporal..." "White" -NoNewline
+        New-Item -Path $folder -ItemType Directory | Out-Null
+        Write-Color " OK" "Green"
+    }
+
+    $url1 = "https://github.com/Orbdiff/JARParser/releases/download/v1.2/JARParser.exe"
+    $url2 = "https://github.com/Orbdiff/JARParser/releases/download/v1.1/JarInspector.class"
+
+    $file1 = Join-Path $folder "JARParser.exe"
+    $file2 = Join-Path $folder "JarInspector.class"
+
+    Write-Color "  Descargando JARParser.exe..." "White" -NoNewline
+    try {
+        Invoke-WebRequest -Uri $url1 -OutFile $file1
+        Write-Color " OK" "Green"
+    } catch {
+        Write-Color " ERROR" "Red"
+        Write-Color "[!] No se pudo descargar JARParser.exe" "Red"
+        Write-Host ""
+        Write-Color "[*] Presiona Enter para continuar..." "White"
+        $null = Read-Host
+        return
+    }
+
+    Write-Color "  Descargando JarInspector.class..." "White" -NoNewline
+    try {
+        Invoke-WebRequest -Uri $url2 -OutFile $file2
+        Write-Color " OK" "Green"
+    } catch {
+        Write-Color " ERROR" "Red"
+        Write-Color "[!] No se pudo descargar JarInspector.class" "Red"
+        Write-Host ""
+        Write-Color "[*] Presiona Enter para continuar..." "White"
+        $null = Read-Host
+        return
+    }
+
+    if (-not (Test-Path $file1)) { 
+        Write-Color "[!] Error: JARParser.exe no encontrado" "Red"
+        Write-Host ""
+        Write-Color "[*] Presiona Enter para continuar..." "White"
+        $null = Read-Host
+        return
+    }
+    
+    if (-not (Test-Path $file2)) { 
+        Write-Color "[!] Error: JarInspector.class no encontrado" "Red"
+        Write-Host ""
+        Write-Color "[*] Presiona Enter para continuar..." "White"
+        $null = Read-Host
+        return
+    }
+
+    function Enable-SeDebugPrivilege {
+        $definition = @"
+using System;
+using System.Runtime.InteropServices;
+
+public class TokenManipulator {
+    [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
+    internal static extern bool OpenProcessToken(IntPtr ProcessHandle, int DesiredAccess, out IntPtr TokenHandle);
+    [DllImport("advapi32.dll", SetLastError = true)]
+    internal static extern bool LookupPrivilegeValue(string lpSystemName, string lpName, out long lpLuid);
+    [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
+    internal static extern bool AdjustTokenPrivileges(IntPtr TokenHandle, bool DisableAllPrivileges, ref TOKEN_PRIVILEGES NewState, int BufferLength, IntPtr PreviousState, IntPtr ReturnLength);
+
+    internal const int TOKEN_ADJUST_PRIVILEGES = 0x20;
+    internal const int TOKEN_QUERY = 0x8;
+    internal const int SE_PRIVILEGE_ENABLED = 0x2;
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    internal struct TOKEN_PRIVILEGES {
+        public int PrivilegeCount;
+        public long Luid;
+        public int Attributes;
+    }
+
+    public static void EnablePrivilege(string privilege) {
+        IntPtr hToken;
+        if (OpenProcessToken(System.Diagnostics.Process.GetCurrentProcess().Handle, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, out hToken)) {
+            long luid;
+            if (LookupPrivilegeValue(null, privilege, out luid)) {
+                TOKEN_PRIVILEGES tp;
+                tp.PrivilegeCount = 1;
+                tp.Luid = luid;
+                tp.Attributes = SE_PRIVILEGE_ENABLED;
+                AdjustTokenPrivileges(hToken, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
+            }
+        }
+    }
+}
+"@
+        Add-Type $definition
+        [TokenManipulator]::EnablePrivilege("SeDebugPrivilege")
+    }
+
+    Write-Color "  Habilitando privilegios de depuración..." "White" -NoNewline
+    try {
+        Enable-SeDebugPrivilege
+        Write-Color " OK" "Green"
+    } catch {
+        Write-Color " ERROR" "Red"
+        Write-Color "[!] No se pudieron habilitar privilegios de depuración" "Red"
+    }
+
+    if (-not (Test-Path $file2)) { 
+        Write-Color "[!] Error: JarInspector.class no disponible" "Red"
+        Write-Host ""
+        Write-Color "[*] Presiona Enter para continuar..." "White"
+        $null = Read-Host
+        return
+    }
+
+    Write-Color "`n[*] Iniciando JARParser.exe..." "Yellow"
+    Write-Color "[*] Nota: Se ejecutará con privilegios de administrador" "White"
+    
+    try {
+        Write-Color "  Ejecutando..." "White" -NoNewline
+        Start-Process -FilePath $file1 -WorkingDirectory $folder -Verb RunAs
+        Write-Color " OK" "Green"
+        Write-Color "[+] JARParser iniciado correctamente" "Green"
+    } catch {
+        Write-Color " ERROR" "Red"
+        Write-Color "[!] Error al iniciar JARParser: $_" "Red"
+        Write-Color "[*] Intenta ejecutar manualmente: $file1" "Yellow"
+    }
+
+    Write-Host ""
+    Write-Color "[*] Archivos descargados en: $folder" "White"
+    Write-Color "[*] Presiona Enter para continuar..." "White"
+    $null = Read-Host
+}
+
+
+
 function Show-ScriptsMenu {
     Clear-Host
     
@@ -1214,14 +1365,15 @@ function Show-ScriptsMenu {
     Write-Host ""
     
     Write-Menu "[1] 📊 Bam-Parser" -IsOption
-    Write-Menu "[2] 📦 JarParser" -IsOption
-    Write-Menu "[3] 🔧 Services " -IsOption
-    Write-Menu "[4] 🎯 Kill Screen Processes" -IsOption
-    Write-Menu "[5] 🔙 Volver al menú principal" -IsOption
+    Write-Menu "[2] 📦 JarParser (Pastebin)" -IsOption
+    Write-Menu "[3] 📦 JarParser (By Diff)" -IsOption
+    Write-Menu "[4] 🔧 Services Script (Análisis de Servicios)" -IsOption
+    Write-Menu "[5] 🎯 Kill Screen Processes" -IsOption
+    Write-Menu "[6] 🔙 Volver al menú principal" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
-    $choice = Read-Host "[?] Selecciona opción (1-5)"
+    $choice = Read-Host "[?] Selecciona opción (1-6)"
     
     switch ($choice) {
         "1" {
@@ -1233,14 +1385,18 @@ function Show-ScriptsMenu {
             Show-ScriptsMenu
         }
         "3" {
-            Invoke-ServicesScript
+            Invoke-JarParserByDiff
             Show-ScriptsMenu
         }
         "4" {
-            Invoke-KillScreenProcesses
+            Invoke-ServicesScript
             Show-ScriptsMenu
         }
         "5" {
+            Invoke-KillScreenProcesses
+            Show-ScriptsMenu
+        }
+        "6" {
             return
         }
         default {
@@ -1261,8 +1417,8 @@ function Invoke-ServicesScript {
     Write-Menu "              SCRIPT DE SERVICIOS - SSA" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
- 
     
+
     $isAdmin = [System.Security.Principal.WindowsPrincipal]::new([System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
     if (-not $isAdmin) {
         Write-Host "`n╔══════════════════════════════════════════════════╗" -ForegroundColor Red
@@ -1714,4 +1870,3 @@ function Main {
 }
 
 Main
-
