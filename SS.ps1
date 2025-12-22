@@ -1210,11 +1210,11 @@ function Invoke-JarParserByDiff {
     
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
-    Write-Menu "               JAR PARSER (By Diff)" -IsTitle
+    Write-Menu "               JARPARSER (By Diff)" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
-    Write-Color "[*] Preparando JARParser (By Diff)..." "Yellow"
+    Write-Color "[*] Preparando JARParser..." "Yellow"
     
     $ProgressPreference = 'SilentlyContinue'
 
