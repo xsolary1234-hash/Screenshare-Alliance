@@ -1,6 +1,6 @@
 # discord.gg/ssa 
 
-$global:version = "2.3.0"
+$global:version = "1.0"
 $global:isAdmin = $false
 
 
@@ -2038,3 +2038,4 @@ function Main {
 }
 
 Main
+
