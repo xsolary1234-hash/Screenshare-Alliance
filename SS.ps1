@@ -1,6 +1,6 @@
 # discord.gg/ssa 
 
-$global:version = "2.3.0"
+$global:version = "1.0"
 $global:isAdmin = $false
 
 
@@ -1365,9 +1365,9 @@ function Show-ScriptsMenu {
     Write-Host ""
     
     Write-Menu "[1] 📊 Bam-Parser" -IsOption
-    Write-Menu "[2] 📦 JarParser (Pastebin)" -IsOption
-    Write-Menu "[3] 📦 JarParser (By Diff)" -IsOption
-    Write-Menu "[4] 🔧 Services Script (Análisis de Servicios)" -IsOption
+    Write-Menu "[2] 📦 JarParser " -IsOption
+    Write-Menu "[3] 📦 JarParser (By Diff) " -IsOption
+    Write-Menu "[4] 🔧 Services    " -IsOption
     Write-Menu "[5] 🎯 Kill Screen Processes" -IsOption
     Write-Menu "[6] 🔙 Volver al menú principal" -IsOption
     Write-Host ""
