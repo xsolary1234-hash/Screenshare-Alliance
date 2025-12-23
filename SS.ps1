@@ -79,7 +79,7 @@ function Invoke-BamParser {
     Write-Menu "                    Screenshare Tool" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
-    Write-Menu "  Join our Discord   " -NoNewline
+    Write-Menu "  Join our Discord  " -NoNewline
     Write-Menu "discord.gg/ssa" -IsWarning
     Write-Host ""
     
@@ -1527,13 +1527,13 @@ function Show-ScriptsMenu {
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
-    Write-Menu "[1] 📊 Bam-Parser" -IsOption
-    Write-Menu "[2] 📦 JarParser   " -IsOption
-    Write-Menu "[3] 📦 JarParser (By Diff)" -IsOption
-    Write-Menu "[4] 🔧 Services " -IsOption
-    Write-Menu "[5] 🎯 Kill Screen Processes" -IsOption
-    Write-Menu "[6] 📂 DLL Parser" -IsOption
-    Write-Menu "[7] 🔙 Volver al menú principal" -IsOption
+    Write-Menu "[1]  Bam-Parser" -IsOption
+    Write-Menu "[2]  JarParser   " -IsOption
+    Write-Menu "[3]  JarParser (By Diff)" -IsOption
+    Write-Menu "[4]  Services " -IsOption
+    Write-Menu "[5]  Kill Screen Processes" -IsOption
+    Write-Menu "[6]  DLL Parser" -IsOption
+    Write-Menu "[7]  Volver al menú principal" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
@@ -1985,10 +1985,10 @@ function Show-MainMenu {
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
-    Write-Menu "[1] 🛠️  Herramientas de Prefetch" -IsOption
-    Write-Menu "[2] 📥 Descargar SS Tools" -IsOption
-    Write-Menu "[3] 📜 Scripts Útiles" -IsOption
-    Write-Menu "[4] 🚪 Salir" -IsOption
+    Write-Menu "[1]  Herramientas de Prefetch" -IsOption
+    Write-Menu "[2]  Descargar SS Tools" -IsOption
+    Write-Menu "[3]  Scripts Útiles" -IsOption
+    Write-Menu "[4]  Salir" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
