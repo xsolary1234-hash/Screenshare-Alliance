@@ -1527,13 +1527,14 @@ function Show-ScriptsMenu {
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
-    Write-Menu "[1]  Bam-Parser" -IsOption
-    Write-Menu "[2]  JarParser   " -IsOption
-    Write-Menu "[3]  JarParser (By Diff)" -IsOption
-    Write-Menu "[4]  Services " -IsOption
-    Write-Menu "[5]  Kill Screen Processes" -IsOption
-    Write-Menu "[6]  DLL Parser" -IsOption
-    Write-Menu "[7]  Volver al menú principal" -IsOption
+    Write-Menu "[1] Bam-Parser" -IsOption
+    Write-Menu "[2] JarParser   " -IsOption
+    Write-Menu "[3] JarParser (By Diff)" -IsOption
+    Write-Menu "[4] Services " -IsOption
+    Write-Menu "[5] Kill Screen Processes" -IsOption
+    Write-Menu "[6] DLL Parser" -IsOption
+    Write-Menu "[7] Doomsday-Fucker" -IsOption
+    Write-Menu "[8] Volver al menú principal" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
@@ -1565,8 +1566,12 @@ function Show-ScriptsMenu {
             Show-ScriptsMenu
         }
         "7" {
-            return
+            Invoke-Doomsday-Fucker
+            Show-ScriptsMenu
         }
+        "8" {
+            return
+        }     
         default {
             Write-Color "[!] Opción no válida" "Red"
             Start-Sleep -Seconds 1
@@ -1967,6 +1972,65 @@ function Invoke-ServicesScript {
     $null = Read-Host
 }
 
+function Invoke-Doomsday-Fucker {
+    Clear-Host
+    
+    Write-Host ""
+    Write-Menu "========================================================" -IsTitle
+Write-Menu "              DOOMSDAY-FUCKER DETECTOR" -IsTitle
+    Write-Menu "========================================================" -IsTitle
+    Write-Host ""
+    
+    Write-Color "[*] Iniciando Doomsday-Fucker Detector..." "Yellow"
+    Write-Color "[*] Descargando y ejecutando scanner..." "Cyan"
+    Write-Host ""
+    
+   
+    if (-not $global:isAdmin) {
+        Write-Color "[!] Esta herramienta requiere permisos de administrador" "Red"
+        Write-Color "[*] Solicitando elevación de permisos..." "Yellow"
+        
+        try {
+         
+            $command = 'Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass && powershell Invoke-Expression (Invoke-RestMethod https://raw.githubusercontent.com/zedoonvm1/powershell-scripts/refs/heads/main/DoomsDayDetector.ps1)'
+            $tempScript = "$env:TEMP\doomsday_scanner.ps1"
+            $command | Out-File -FilePath $tempScript -Encoding UTF8
+            
+           
+            Start-Process PowerShell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$tempScript`"" -Verb RunAs
+            Write-Color "[+] Ejecutando como administrador..." "Green"
+        }
+        catch {
+            Write-Color "[!] No se pudo elevar permisos. Ejecuta manualmente:" "Red"
+            Write-Host ""
+            Write-Color "Comando manual:" "Yellow"
+            Write-Host "Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass && powershell Invoke-Expression (Invoke-RestMethod https://raw.githubusercontent.com/zedoonvm1/powershell-scripts/refs/heads/main/DoomsDayDetector.ps1)" -ForegroundColor Green
+        }
+    }
+    else {
+       
+        Write-Color "[+] Permisos de administrador confirmados" "Green"
+        Write-Host ""
+        Write-Color "[*] Ejecutando comando..." "Yellow"
+        
+        try {
+          
+            Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+            Invoke-Expression (Invoke-RestMethod https://raw.githubusercontent.com/zedoonvm1/powershell-scripts/refs/heads/main/DoomsDayDetector.ps1)
+            Write-Color "[+] Comando ejecutado exitosamente" "Green"
+        }
+        catch {
+            Write-Color "[!] Error al ejecutar el comando: $_" "Red"
+            Write-Host ""
+            Write-Color "Intenta ejecutar manualmente:" "Yellow"
+            Write-Host "powershell -Command `"Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass; Invoke-Expression (Invoke-RestMethod https://raw.githubusercontent.com/zedoonvm1/powershell-scripts/refs/heads/main/DoomsDayDetector.ps1)`"" -ForegroundColor Green
+        }
+    }
+    
+    Write-Host ""
+    Write-Color "[*] Presiona Enter para continuar..." "White"
+    $null = Read-Host
+}
 
 
 function Show-MainMenu {
@@ -1985,10 +2049,10 @@ function Show-MainMenu {
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
-    Write-Menu "[1]  Herramientas de Prefetch" -IsOption
-    Write-Menu "[2]  Descargar SS Tools" -IsOption
-    Write-Menu "[3]  Scripts Útiles" -IsOption
-    Write-Menu "[4]  Salir" -IsOption
+    Write-Menu "[1] Herramientas de Prefetch" -IsOption
+    Write-Menu "[2] Descargar SS Tools" -IsOption
+    Write-Menu "[3] Scripts Útiles" -IsOption
+    Write-Menu "[4] Salir" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
