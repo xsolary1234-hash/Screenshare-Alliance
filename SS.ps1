@@ -1538,7 +1538,7 @@ function Show-ScriptsMenu {
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
-    $choice = Read-Host "[?] Selecciona opción (1-7)"
+    $choice = Read-Host "[?] Selecciona opción (1-8)"
     
     switch ($choice) {
         "1" {
@@ -2102,3 +2102,4 @@ function Main {
 }
 
 Main
+
