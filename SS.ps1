@@ -618,13 +618,14 @@ function Show-NirsoftToolsMenu {
    
     $nirsoftTools = @(
         @{ID=1; Name="LastActivityView"; Url="https://www.nirsoft.net/utils/lastactivityview.zip"; Description="Muestra el historial de actividad del sistema"},
-        @{ID=2; Name="UserAssistView"; Url="https://www.nirsoft.net/utils/userassistview-x64.zip"; Description="Analiza claves UserAssist del registro"},
+        @{ID=2; Name="UserAssistView"; Url="https://www.nirsoft.net/utils/userassistview.zip"; Description="Analiza claves UserAssist del registro"},
         @{ID=3; Name="USBDeview"; Url="https://www.nirsoft.net/utils/usbdeview-x64.zip"; Description="Muestra dispositivos USB conectados"},
         @{ID=4; Name="NetworkUsageView"; Url="https://www.nirsoft.net/utils/networkusageview-x64.zip"; Description="Monitor de uso de red"},
         @{ID=5; Name="AlternateStreamView"; Url="https://www.nirsoft.net/utils/alternatestreamview-x64.zip"; Description="Detecta flujos alternos ADS"},
         @{ID=6; Name="WinPrefetchView"; Url="https://www.nirsoft.net/utils/winprefetchview-x64.zip"; Description="Analiza archivos prefetch"},
-        @{ID=7; Name="ShellBagsView"; Url="https://www.nirsoft.net/utils/shellbagsview-x64.zip"; Description="Analiza ShellBags (historial de carpetas)"},
-        @{ID=8; Name="TurnedOnTimesView"; Url="https://www.nirsoft.net/utils/turnedontimesview-x64.zip"; Description="Muestra horas de encendido/apagado"}
+        @{ID=7; Name="ShellBagsView"; Url="https://www.nirsoft.net/utils/shellbagsview.zip"; Description="Analiza ShellBags (historial de carpetas)"},
+        @{ID=8; Name="ExecutedProgramsList"; Url="https://www.nirsoft.net/utils/executedprogramslist.zip"; Description="Muestra programas ejecutados previamente en Windows"},
+        @{ID=9; Name="TurnedOnTimesView"; Url="https://www.nirsoft.net/utils/turnedontimesview-x64.zip"; Description="Muestra horas de encendido/apagado"}
     )
     
     Write-Host ""
@@ -730,8 +731,9 @@ function Show-SpokwnToolsMenu {
         @{ID=4; Name="PrefetchParser"; Url="https://github.com/spokwn/prefetch-parser/releases/download/v1.5.5/PrefetchParser.exe"},
         @{ID=5; Name="ActivitiesCacheParser"; Url="https://github.com/spokwn/ActivitiesCache-execution/releases/download/v0.6.5/ActivitiesCacheParser.exe"},
         @{ID=6; Name="JournalTrace"; Url="https://github.com/spokwn/JournalTrace/releases/download/1.2/JournalTrace.exe"},
-        @{ID=7; Name="Tool (espouken)"; Url="https://github.com/spokwn/Tool/releases/download/v1.1.3/espouken.exe"},
-        @{ID=8; Name="PcaSvcExecuted"; Url="https://github.com/spokwn/pcasvc-executed/releases/download/v0.8.7/PcaSvcExecuted.exe"}
+        @{ID=7; Name="espouken"; Url="https://github.com/spokwn/Tool/releases/download/v1.1.3/espouken.exe"},
+        @{ID=8; Name= "BamDeletedKeys"; Url="https://github.com/spokwn/BamDeletedKeys/releases/download/v1.0/BamDeletedKeys.exe"},
+        @{ID=9; Name="PcaSvcExecuted"; Url="https://github.com/spokwn/pcasvc-executed/releases/download/v0.8.7/PcaSvcExecuted.exe"}
     )
     
     Write-Host ""
@@ -749,7 +751,7 @@ function Show-SpokwnToolsMenu {
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
-    $selection = Read-Host "[?] Selecciona herramienta (1-8, A, X)"
+    $selection = Read-Host "[?] Selecciona herramienta (1-9, A, X)"
     
     $downloadPath = "C:\Screenshare\SpokwnTools"
     if (!(Test-Path $downloadPath)) {
@@ -824,8 +826,10 @@ function Show-OrbdiffToolsMenu {
         @{ID=1; Name="Fileless"; Url="https://github.com/Orbdiff/Fileless/releases/download/v1.1/Fileless.exe"},
         @{ID=2; Name="JARParser"; Url="https://github.com/Orbdiff/JARParser/releases/download/v1.2/JARParser.exe"},
         @{ID=3; Name="PFTrace"; Url="https://github.com/Orbdiff/PFTrace/releases/download/v1.0.1/PFTrace.exe"},
-        @{ID=4; Name="PrefetchView++"; Url="https://github.com/Orbdiff/PrefetchView/releases/download/v1.5/PrefetchView++.exe"},
-        @{ID=5; Name="JournalParser"; Url="https://github.com/Orbdiff/JournalParser/releases/download/v1.1/JournalParser.exe"}
+        @{ID=4; Name="BAMReveal"; Url="https://github.com/Orbdiff/BAMReveal/releases/download/rework/BAMReveal.exe"},
+        @{ID=5; Name="PrefetchView++"; Url="https://github.com/Orbdiff/PrefetchView/releases/download/v1.5/PrefetchView++.exe"},
+        @{ID=6; Name="AmcacheParser"; Url="https://github.com/Orbdiff/AmcacheParser/releases/download/v0.1/AmcacheParser.exe"},
+        @{ID=7; Name="JournalParser"; Url="https://github.com/Orbdiff/JournalParser/releases/download/v1.1/JournalParser.exe"}
     )
     
     Write-Host ""
@@ -1062,7 +1066,7 @@ function Invoke-DownloadAllTools {
    
     $nirsoftTools = @(
         @{Name="LastActivityView"; Url="https://www.nirsoft.net/utils/lastactivityview.zip"},
-        @{Name="UserAssistView"; Url="https://www.nirsoft.net/utils/userassistview-x64.zip"},
+        @{Name="UserAssistView"; Url="https://www.nirsoft.net/utils/userassistview.zip"},
         @{Name="USBDeview"; Url="https://www.nirsoft.net/utils/usbdeview-x64.zip"},
         @{Name="WinPrefetchView"; Url="https://www.nirsoft.net/utils/winprefetchview-x64.zip"}
     )
@@ -2038,6 +2042,7 @@ function Show-MainMenu {
     
     if ($global:isAdmin) {
         Write-Color "[+] Ejecutando como Administrador" "Green"
+        Write-Color "[+] Made with love by Solary and 308" "Purple"
     }
     else {
         Write-Color "[!] Algunas funciones requieren Admin" "Yellow"
@@ -2045,7 +2050,7 @@ function Show-MainMenu {
     
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
-    Write-Menu "                   MENÚ PRINCIPAL" -IsTitle
+    Write-Menu "               MENÚ PRINCIPAL" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
@@ -2102,4 +2107,3 @@ function Main {
 }
 
 Main
-
