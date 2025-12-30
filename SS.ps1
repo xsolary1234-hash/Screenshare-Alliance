@@ -829,12 +829,13 @@ function Show-OrbdiffToolsMenu {
         @{ID=4; Name="BAMReveal"; Url="https://github.com/Orbdiff/BAMReveal/releases/download/rework/BAMReveal.exe"},
         @{ID=5; Name="PrefetchView++"; Url="https://github.com/Orbdiff/PrefetchView/releases/download/v1.5/PrefetchView++.exe"},
         @{ID=6; Name="AmcacheParser"; Url="https://github.com/Orbdiff/AmcacheParser/releases/download/v0.1/AmcacheParser.exe"},
-        @{ID=7; Name="JournalParser"; Url="https://github.com/Orbdiff/JournalParser/releases/download/v1.1/JournalParser.exe"}
+        @{ID=7; Name="CheckDeletedUSN"; Url="https://github.com/Orbdiff/CheckDeletedUSN/releases/download/v0.2.0/CheckDeletedUSN.exe"},
+        @{ID=8; Name="JournalParser"; Url="https://github.com/Orbdiff/JournalParser/releases/download/v1.1/JournalParser.exe"}
     )
     
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
-    Write-Menu "           HERRAMIENTAS DE ORBDIFF" -IsTitle
+    Write-Menu "           Herramientas DE ORBDIFF" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
@@ -847,7 +848,7 @@ function Show-OrbdiffToolsMenu {
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
-    $selection = Read-Host "[?] Selecciona herramienta (1-5, A, X)"
+    $selection = Read-Host "[?] Selecciona herramienta (1-8, A, X)"
     
     $downloadPath = "C:\Screenshare\OrbdiffTools"
     if (!(Test-Path $downloadPath)) {
@@ -1030,7 +1031,7 @@ function Show-OtherToolsMenu {
 function Invoke-DownloadAllTools {
     Clear-Host
     Write-Host ""
-    Write-Color "[*] Descargando TODAS las herramientas SS..." "Yellow"
+    Write-Color "[*] Descargando TODAS las Herramientas..." "Yellow"
     Write-Color "[!] Esto puede tomar varios minutos" "Yellow"
     Write-Host ""
     
@@ -1048,7 +1049,10 @@ function Invoke-DownloadAllTools {
     Write-Color "[*] Descargando herramientas Zimmerman..." "Yellow"
     $zimmermanTools = @(
         @{Name="AmcacheParser"; Url="https://download.ericzimmermanstools.com/net9/AmcacheParser.zip"},
-        @{Name="RegistryExplorer"; Url="https://download.ericzimmermanstools.com/net9/RegistryExplorer.zip"}
+        @{Name="RegistryExplorer"; Url="https://download.ericzimmermanstools.com/net9/RegistryExplorer.zip"},
+        @{Name="MFTECmd"; Url="https://download.ericzimmermanstools.com/net9/MFTECmd.zip"},
+        @{Name="PECmd"; Url="https://download.ericzimmermanstools.com/net9/PECmd.zip"},
+        @{Name="TimelineExplorer"; Url="https://download.ericzimmermanstools.com/net6/TimelineExplorer.zip"}
     )
     foreach ($tool in $zimmermanTools) {
         Write-Color "  $($tool.Name)..." "White" -NoNewline
@@ -1068,7 +1072,8 @@ function Invoke-DownloadAllTools {
         @{Name="LastActivityView"; Url="https://www.nirsoft.net/utils/lastactivityview.zip"},
         @{Name="UserAssistView"; Url="https://www.nirsoft.net/utils/userassistview.zip"},
         @{Name="USBDeview"; Url="https://www.nirsoft.net/utils/usbdeview-x64.zip"},
-        @{Name="WinPrefetchView"; Url="https://www.nirsoft.net/utils/winprefetchview-x64.zip"}
+        @{Name="WinPrefetchView"; Url="https://www.nirsoft.net/utils/winprefetchview-x64.zip"},
+        @{Name="ShellBagsView"; Url="https://www.nirsoft.net/utils/shellbagsview.zip"}
     )
     foreach ($tool in $nirsoftTools) {
         Write-Color "  $($tool.Name)..." "White" -NoNewline
@@ -1085,7 +1090,8 @@ function Invoke-DownloadAllTools {
     Write-Color "[*] Descargando herramientas Spokwn..." "Yellow"
     $spokwnTools = @(
         @{Name="BAMParser"; Url="https://github.com/spokwn/BAM-parser/releases/download/v1.2.9/BAMParser.exe"},
-        @{Name="PrefetchParser"; Url="https://github.com/spokwn/prefetch-parser/releases/download/v1.5.5/PrefetchParser.exe"}
+        @{Name="PrefetchParser"; Url="https://github.com/spokwn/prefetch-parser/releases/download/v1.5.5/PrefetchParser.exe"},
+        @{Name="KernelLiveDumpTool"; Url="https://github.com/spokwn/KernelLiveDumpTool/releases/download/v1.1/KernelLiveDumpTool.exe"}
     )
     foreach ($tool in $spokwnTools) {
         Write-Color "  $($tool.Name)..." "White" -NoNewline
@@ -1098,7 +1104,54 @@ function Invoke-DownloadAllTools {
         } catch { Write-Color " ERROR" "Red" }
         $totalTools++
     }
+
+        Write-Color "`n[4/6] Herramientas Orbdiff..." "Cyan"
+    $orbdiffTools = @(
+        @{Name="PrefetchView++"; Url="https://github.com/Orbdiff/PrefetchView/releases/download/v1.5/PrefetchView++.exe"},
+        @{Name="JARParser"; Url="https://github.com/Orbdiff/JARParser/releases/download/v1.2/JARParser.exe"},
+        @{Name="BAMReveal"; Url="https://github.com/Orbdiff/BAMReveal/releases/download/rework/BAMReveal.exe"}
+    )
     
+    $path = "$mainPath\OrbdiffTools"
+    if (!(Test-Path $path)) { New-Item -ItemType Directory -Path $path -Force | Out-Null }
+    
+    foreach ($tool in $orbdiffTools) {
+        Write-Color "  $($tool.Name)..." "White" -NoNewline
+        try {
+            $outputFile = "$path\$($tool.Name).exe"
+            Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing -ErrorAction Stop
+            Write-Color " OK" "Green"
+            $totalSuccess++
+        } catch { 
+            Write-Color " ERROR" "Red"
+        }
+        $totalTools++
+        Start-Sleep -Milliseconds 300
+    }
+Write-Color "`n[5/6] Otras Herramientas..." "Cyan"
+$otherTools = @(
+@{Name="Everything"; Url="https://www.voidtools.com/Everything-1.4.1.1029.x86-Setup.exe"},
+@{Name="SystemInformer"; Url="https://github.com/winsiderss/si-builds/releases/download/3.2.25297.1516/systeminformer-build-canary-setup.exe"}
+)
+
+   $path = "$mainPath\OtherTools"
+   if (!(Test-Path $path)) { New-Item -ItemType Directory -Path $path -Force | Out-Null }
+   
+   foreach ($tool in $otherTools) {
+    Write-Color " $($tool.Name)..." "White" -NoNewline
+    try {
+    $outputFile = "$path\$($tool.Name).exe"
+    Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing -ErrorAction Stop
+    Write-Color " OK" "Green"
+    $totalSuccess++
+    } catch {
+        Write-Color " ERROR" "Red"
+    }
+    $totalTools++
+    Start-Sleep -Milliseconds 300
+   }            
+
+
     Write-Color "`n[+] $totalSuccess/$totalTools herramientas principales descargadas" "Green"
     Write-Color "[*] Ubicación: $mainPath" "White"
     
@@ -1121,7 +1174,7 @@ function Invoke-JarParser {
         Write-Color "[+] Ya se ejecuta como administrador" "Green"
         try {
             Write-Color "[*] Ejecutando comando..." "Yellow"
-            Invoke-RestMethod -Uri 'https://pastebin.com/raw/bRGvrGSw' | Invoke-Expression
+            Invoke-RestMethod -Uri 'https://pastebin.com/raw/t2TWJMdu' | Invoke-Expression
             Write-Color "[+] Comando ejecutado exitosamente" "Green"
         }
         catch {
@@ -1132,7 +1185,7 @@ function Invoke-JarParser {
         Write-Color "[*] Solicitando permisos de administrador..." "Yellow"
         
         try {
-            $script = "irm 'https://pastebin.com/raw/bRGvrGSw' | iex"
+            $script = "irm 'https://pastebin.com/raw/t2TWJMdu' | iex"
             $bytes = [System.Text.Encoding]::Unicode.GetBytes($script)
             $encodedCommand = [Convert]::ToBase64String($bytes)
             
@@ -1142,7 +1195,7 @@ function Invoke-JarParser {
         catch {
             Write-Color "[!] No se pudo elevar permisos" "Red"
             Write-Color "[*] Ejecuta manualmente como administrador:" "Yellow"
-            Write-Host "   powershell -command `"irm 'https://pastebin.com/raw/bRGvrGSw' | iex`"" -ForegroundColor Green
+            Write-Host "   powershell -command `"irm 'https://pastebin.com/raw/t2TWJMdu' | iex`"" -ForegroundColor Green
         }
     }
     
@@ -2042,7 +2095,7 @@ function Show-MainMenu {
     
     if ($global:isAdmin) {
         Write-Color "[+] Ejecutando como Administrador" "Green"
-        Write-Color "[+] Made with love by Solary and 308" "Purple"
+        Write-Color "[+] Made with love by Solary and 308❤️" "Purple"
     }
     else {
         Write-Color "[!] Algunas funciones requieren Admin" "Yellow"
