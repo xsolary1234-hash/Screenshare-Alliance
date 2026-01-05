@@ -84,7 +84,7 @@ function Invoke-BamParser {
     Write-Host ""
     
     if (-not $global:isAdmin) {
-        Write-Color "[!] Esta herramienta requiere permisos de administrador" "Red"
+        Write-Color "[!] Esta tool requiere permisos de administrador" "Red"
         Write-Color "[*] Por favor, ejecuta este script como administrador" "Yellow"
         Write-Host ""
         Write-Color "[*] Presiona Enter para continuar..." "White"
@@ -293,7 +293,7 @@ function Show-PrefetchMenu {
     
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
-    Write-Menu "                   HERRAMIENTAS PREFETCH" -IsTitle
+    Write-Menu "                   PREFETCH TOOLS" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
@@ -301,7 +301,7 @@ function Show-PrefetchMenu {
     Write-Menu "[2] Descargar WinPrefetchView (Nirsoft)" -IsOption
     Write-Menu "[3] Descargar Prefetch Parser (Spokwn)" -IsOption
     Write-Menu "[4] Analizar prefetch local" -IsOption
-    Write-Menu "[5] Descargar TODAS las herramientas Prefetch" -IsOption
+    Write-Menu "[5] Descargar TODAS las tools Prefetch" -IsOption
     Write-Menu "[6] Volver al menú principal" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
@@ -326,7 +326,7 @@ function Show-PrefetchMenu {
                 Invoke-WebRequest -Uri $url -OutFile $outputFile -UseBasicParsing | Out-Null
                 Write-Color " OK" "Green"
                 
-                Write-Color "[+] Herramienta descargada en: $downloadPath" "Green"
+                Write-Color "[+] Tool descargada en: $downloadPath" "Green"
             }
             catch {
                 Write-Color "[!] Error al descargar: $_" "Red"
@@ -347,7 +347,7 @@ function Show-PrefetchMenu {
                 Remove-Item $outputFile -Force | Out-Null
                 
                 Write-Color " OK" "Green"
-                Write-Color "[+] Herramienta descargada y extraída en: $downloadPath" "Green"
+                Write-Color "[+] Tool descargada y extraída en: $downloadPath" "Green"
             }
             catch {
                 Write-Color "[!] Error al descargar: $_" "Red"
@@ -365,7 +365,7 @@ function Show-PrefetchMenu {
                 Invoke-WebRequest -Uri $url -OutFile $outputFile -UseBasicParsing | Out-Null
                 Write-Color " OK" "Green"
                 
-                Write-Color "[+] Herramienta descargada en: $downloadPath" "Green"
+                Write-Color "[+] Tool descargada en: $downloadPath" "Green"
             }
             catch {
                 Write-Color "[!] Error al descargar: $_" "Red"
@@ -398,7 +398,7 @@ function Show-PrefetchMenu {
         }
         "5" {
             Write-Host ""
-            Write-Color "[*] Descargando TODAS las herramientas Prefetch..." "Yellow"
+            Write-Color "[*] Descargando TODAS las tools Prefetch..." "Yellow"
             
             $tools = @(
                 @{Name="PrefetchView++"; Url="https://github.com/Orbdiff/PrefetchView/releases/download/v1.5/PrefetchView++.exe"},
@@ -428,7 +428,7 @@ function Show-PrefetchMenu {
                 }
             }
             
-            Write-Color "`n[+] $success/$($tools.Count) herramientas descargadas" "Green"
+            Write-Color "`n[+] $success/$($tools.Count) tools descargadas" "Green"
         }
         "6" {
             return
@@ -456,16 +456,16 @@ function Show-DownloadSSTools {
     
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
-    Write-Menu "           DESCARGAR HERRAMIENTAS SS" -IsTitle
+    Write-Menu "           DESCARGAR SS TOOLS" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
-    Write-Menu "[1] Descargar TODAS las herramientas" -IsOption
-    Write-Menu "[2] Herramientas de Eric Zimmerman" -IsOption
-    Write-Menu "[3] Herramientas de Nirsoft" -IsOption
-    Write-Menu "[4] Herramientas de Spokwn" -IsOption
-    Write-Menu "[5] Herramientas de Orbdiff" -IsOption
-    Write-Menu "[6] Otras herramientas útiles" -IsOption
+    Write-Menu "[1] Descargar TODAS las tools" -IsOption
+    Write-Menu "[2] Tools de Eric Zimmerman" -IsOption
+    Write-Menu "[3] Tools de Nirsoft" -IsOption
+    Write-Menu "[4] Tools de Spokwn" -IsOption
+    Write-Menu "[5] Tools de Orbdiff" -IsOption
+    Write-Menu "[6] Otras tools útiles" -IsOption
     Write-Menu "[7] Volver al menú principal" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
@@ -518,7 +518,7 @@ function Show-ZimmermanToolsMenu {
     
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
-    Write-Menu "        HERRAMIENTAS DE ERIC ZIMMERMAN" -IsTitle
+    Write-Menu "        TOOLS DE ERIC ZIMMERMAN" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
@@ -526,12 +526,12 @@ function Show-ZimmermanToolsMenu {
         Write-Menu "[$($tool.ID)] $($tool.Name)" -IsOption
     }
     
-    Write-Menu "[A] Descargar TODAS las herramientas Zimmerman" -IsOption
+    Write-Menu "[A] Descargar TODAS las tools Zimmerman" -IsOption
     Write-Menu "[X] Volver al menú anterior" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
-    $selection = Read-Host "[?] Selecciona herramienta (1-8, A, X)"
+    $selection = Read-Host "[?] Selecciona tool (1-8, A, X)"
     
     $downloadPath = "C:\Screenshare\ZimmermanTools"
     if (!(Test-Path $downloadPath)) {
@@ -540,7 +540,7 @@ function Show-ZimmermanToolsMenu {
     
     if ($selection.ToUpper() -eq "A") {
         Write-Host ""
-        Write-Color "[*] Descargando TODAS las herramientas Zimmerman..." "Yellow"
+        Write-Color "[*] Descargando TODAS las tools Zimmerman..." "Yellow"
         
         $success = 0
         foreach ($tool in $zimmermanTools) {
@@ -556,7 +556,7 @@ function Show-ZimmermanToolsMenu {
             }
         }
         
-        Write-Color "`n[+] $success/$($zimmermanTools.Count) herramientas descargadas" "Green"
+        Write-Color "`n[+] $success/$($zimmermanTools.Count) tools descargadas" "Green"
         
         $netResponse = Read-Host "`n[?] ¿Descargar .NET Runtime (requerido)? (S/N)"
         if ($netResponse -match '^[SsYy]') {
@@ -586,7 +586,7 @@ function Show-ZimmermanToolsMenu {
             $outputFile = "$downloadPath\$($tool.Name).zip"
             Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
             Write-Color " OK" "Green"
-            Write-Color "[+] Herramienta descargada en: $downloadPath" "Green"
+            Write-Color "[+] Tool descargada en: $downloadPath" "Green"
         }
         catch {
             Write-Color " ERROR" "Red"
@@ -630,7 +630,7 @@ function Show-NirsoftToolsMenu {
     
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
-    Write-Menu "           HERRAMIENTAS DE NIRSOFT" -IsTitle
+    Write-Menu "           TOOLS DE NIRSOFT" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
@@ -639,12 +639,12 @@ function Show-NirsoftToolsMenu {
         Write-Host "     $($tool.Description)" -ForegroundColor Gray
     }
     
-    Write-Menu "[A] Descargar TODAS las herramientas Nirsoft" -IsOption
+    Write-Menu "[A] Descargar TODAS las tools Nirsoft" -IsOption
     Write-Menu "[X] Volver al menú anterior" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
-    $selection = Read-Host "[?] Selecciona herramienta (1-8, A, X)"
+    $selection = Read-Host "[?] Selecciona tool (1-8, A, X)"
     
     $downloadPath = "C:\Screenshare\NirsoftTools"
     if (!(Test-Path $downloadPath)) {
@@ -653,7 +653,7 @@ function Show-NirsoftToolsMenu {
     
     if ($selection.ToUpper() -eq "A") {
         Write-Host ""
-        Write-Color "[*] Descargando TODAS las herramientas Nirsoft..." "Yellow"
+        Write-Color "[*] Descargando TODAS las tools Nirsoft..." "Yellow"
         
         $success = 0
         foreach ($tool in $nirsoftTools) {
@@ -673,7 +673,7 @@ function Show-NirsoftToolsMenu {
             }
         }
         
-        Write-Color "`n[+] $success/$($nirsoftTools.Count) herramientas descargadas" "Green"
+        Write-Color "`n[+] $success/$($nirsoftTools.Count) tools descargadas" "Green"
     }
     elseif ($selection.ToUpper() -eq "X") {
         Show-DownloadSSTools
@@ -695,7 +695,7 @@ function Show-NirsoftToolsMenu {
             Remove-Item $outputFile -Force | Out-Null
             
             Write-Color " OK" "Green"
-            Write-Color "[+] Herramienta descargada y extraída en: $downloadPath" "Green"
+            Write-Color "[+] Tool descargada y extraída en: $downloadPath" "Green"
         }
         catch {
             Write-Color " ERROR" "Red"
@@ -733,12 +733,12 @@ function Show-SpokwnToolsMenu {
         @{ID=6; Name="JournalTrace"; Url="https://github.com/spokwn/JournalTrace/releases/download/1.2/JournalTrace.exe"},
         @{ID=7; Name="espouken"; Url="https://github.com/spokwn/Tool/releases/download/v1.1.3/espouken.exe"},
         @{ID=8; Name= "BamDeletedKeys"; Url="https://github.com/spokwn/BamDeletedKeys/releases/download/v1.0/BamDeletedKeys.exe"},
-        @{ID=9; Name="PcaSvcExecuted"; Url="https://github.com/spokwn/pcasvc-executed/releases/download/v0.8.7/PcaSvcExecuted.exe"}
+        @{ID=9; Name="PcaSvcExecuted"; Url="https://github.com/spokwn/pcasvc-execution/releases/download/v0.8.7/PcaSvcExecuted.exe"}
     )
     
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
-    Write-Menu "           HERRAMIENTAS DE SPOKWN" -IsTitle
+    Write-Menu "           TOOLS DE SPOKWN" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
@@ -746,12 +746,12 @@ function Show-SpokwnToolsMenu {
         Write-Menu "[$($tool.ID)] $($tool.Name)" -IsOption
     }
     
-    Write-Menu "[A] Descargar TODAS las herramientas Spokwn" -IsOption
+    Write-Menu "[A] Descargar TODAS las tools Spokwn" -IsOption
     Write-Menu "[X] Volver al menú anterior" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
-    $selection = Read-Host "[?] Selecciona herramienta (1-9, A, X)"
+    $selection = Read-Host "[?] Selecciona tool (1-9, A, X)"
     
     $downloadPath = "C:\Screenshare\SpokwnTools"
     if (!(Test-Path $downloadPath)) {
@@ -760,7 +760,7 @@ function Show-SpokwnToolsMenu {
     
     if ($selection.ToUpper() -eq "A") {
         Write-Host ""
-        Write-Color "[*] Descargando TODAS las herramientas Spokwn..." "Yellow"
+        Write-Color "[*] Descargando TODAS las tools Spokwn..." "Yellow"
         
         $success = 0
         foreach ($tool in $spokwnTools) {
@@ -776,7 +776,7 @@ function Show-SpokwnToolsMenu {
             }
         }
         
-        Write-Color "`n[+] $success/$($spokwnTools.Count) herramientas descargadas" "Green"
+        Write-Color "`n[+] $success/$($spokwnTools.Count) tools descargadas" "Green"
     }
     elseif ($selection.ToUpper() -eq "X") {
         Show-DownloadSSTools
@@ -793,7 +793,7 @@ function Show-SpokwnToolsMenu {
             $outputFile = "$downloadPath\$($tool.Name).exe"
             Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
             Write-Color " OK" "Green"
-            Write-Color "[+] Herramienta descargada en: $downloadPath" "Green"
+            Write-Color "[+] Tool descargada en: $downloadPath" "Green"
         }
         catch {
             Write-Color " ERROR" "Red"
@@ -835,7 +835,7 @@ function Show-OrbdiffToolsMenu {
     
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
-    Write-Menu "           Herramientas DE ORBDIFF" -IsTitle
+    Write-Menu "           TOOLS DE ORBDIFF" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
@@ -843,12 +843,12 @@ function Show-OrbdiffToolsMenu {
         Write-Menu "[$($tool.ID)] $($tool.Name)" -IsOption
     }
     
-    Write-Menu "[A] Descargar TODAS las herramientas Orbdiff" -IsOption
+    Write-Menu "[A] Descargar TODAS las tools Orbdiff" -IsOption
     Write-Menu "[X] Volver al menú anterior" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
-    $selection = Read-Host "[?] Selecciona herramienta (1-8, A, X)"
+    $selection = Read-Host "[?] Selecciona tool (1-8, A, X)"
     
     $downloadPath = "C:\Screenshare\OrbdiffTools"
     if (!(Test-Path $downloadPath)) {
@@ -857,7 +857,7 @@ function Show-OrbdiffToolsMenu {
     
     if ($selection.ToUpper() -eq "A") {
         Write-Host ""
-        Write-Color "[*] Descargando TODAS las herramientas Orbdiff..." "Yellow"
+        Write-Color "[*] Descargando TODAS las tools Orbdiff..." "Yellow"
         
         $success = 0
         foreach ($tool in $orbdiffTools) {
@@ -873,7 +873,7 @@ function Show-OrbdiffToolsMenu {
             }
         }
         
-        Write-Color "`n[+] $success/$($orbdiffTools.Count) herramientas descargadas" "Green"
+        Write-Color "`n[+] $success/$($orbdiffTools.Count) tools descargadas" "Green"
     }
     elseif ($selection.ToUpper() -eq "X") {
         Show-DownloadSSTools
@@ -890,7 +890,7 @@ function Show-OrbdiffToolsMenu {
             $outputFile = "$downloadPath\$($tool.Name).exe"
             Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
             Write-Color " OK" "Green"
-            Write-Color "[+] Herramienta descargada en: $downloadPath" "Green"
+            Write-Color "[+] Tool descargada en: $downloadPath" "Green"
         }
         catch {
             Write-Color " ERROR" "Red"
@@ -929,7 +929,7 @@ function Show-OtherToolsMenu {
     
     Write-Host ""
     Write-Menu "========================================================" -IsTitle
-    Write-Menu "          OTRAS HERRAMIENTAS ÚTILES" -IsTitle
+    Write-Menu "          OTRAS TOOLS ÚTILES" -IsTitle
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
@@ -937,12 +937,12 @@ function Show-OtherToolsMenu {
         Write-Menu "[$($tool.ID)] $($tool.Name)" -IsOption
     }
     
-    Write-Menu "[A] Descargar TODAS las otras herramientas" -IsOption
+    Write-Menu "[A] Descargar TODAS las otras tools" -IsOption
     Write-Menu "[X] Volver al menú anterior" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
     
-    $selection = Read-Host "[?] Selecciona herramienta (1-5, A, X)"
+    $selection = Read-Host "[?] Selecciona tool (1-5, A, X)"
     
     $downloadPath = "C:\Screenshare\OtherTools"
     if (!(Test-Path $downloadPath)) {
@@ -951,7 +951,7 @@ function Show-OtherToolsMenu {
     
     if ($selection.ToUpper() -eq "A") {
         Write-Host ""
-        Write-Color "[*] Descargando TODAS las otras herramientas..." "Yellow"
+        Write-Color "[*] Descargando TODAS las otras tools..." "Yellow"
         
         $success = 0
         foreach ($tool in $otherTools) {
@@ -975,7 +975,7 @@ function Show-OtherToolsMenu {
             }
         }
         
-        Write-Color "`n[+] $success/$($otherTools.Count) herramientas descargadas" "Green"
+        Write-Color "`n[+] $success/$($otherTools.Count) tools descargadas" "Green"
     }
     elseif ($selection.ToUpper() -eq "X") {
         Show-DownloadSSTools
@@ -995,13 +995,13 @@ function Show-OtherToolsMenu {
                 Expand-Archive -Path $outputFile -DestinationPath $downloadPath -Force | Out-Null
                 Remove-Item $outputFile -Force | Out-Null
                 Write-Color " OK" "Green"
-                Write-Color "[+] Herramienta descargada y extraída en: $downloadPath" "Green"
+                Write-Color "[+] Tool descargada y extraída en: $downloadPath" "Green"
             }
             else {
                 $outputFile = "$downloadPath\$($tool.Name).exe"
                 Invoke-WebRequest -Uri $tool.Url -OutFile $outputFile -UseBasicParsing | Out-Null
                 Write-Color " OK" "Green"
-                Write-Color "[+] Herramienta descargada en: $downloadPath" "Green"
+                Write-Color "[+] Tool descargada en: $downloadPath" "Green"
             }
         }
         catch {
@@ -1031,7 +1031,7 @@ function Show-OtherToolsMenu {
 function Invoke-DownloadAllTools {
     Clear-Host
     Write-Host ""
-    Write-Color "[*] Descargando TODAS las Herramientas..." "Yellow"
+    Write-Color "[*] Descargando TODAS las Tools..." "Yellow"
     Write-Color "[!] Esto puede tomar varios minutos" "Yellow"
     Write-Host ""
     
@@ -1046,7 +1046,7 @@ function Invoke-DownloadAllTools {
     $totalSuccess = 0
     $totalTools = 0
     
-    Write-Color "[*] Descargando herramientas Zimmerman..." "Yellow"
+    Write-Color "[*] Descargando tools Zimmerman..." "Yellow"
     $zimmermanTools = @(
         @{Name="AmcacheParser"; Url="https://download.ericzimmermanstools.com/net9/AmcacheParser.zip"},
         @{Name="RegistryExplorer"; Url="https://download.ericzimmermanstools.com/net9/RegistryExplorer.zip"},
@@ -1066,7 +1066,7 @@ function Invoke-DownloadAllTools {
         $totalTools++
     }
     
-    Write-Color "[*] Descargando herramientas Nirsoft..." "Yellow"
+    Write-Color "[*] Descargando tools Nirsoft..." "Yellow"
    
     $nirsoftTools = @(
         @{Name="LastActivityView"; Url="https://www.nirsoft.net/utils/lastactivityview.zip"},
@@ -1087,7 +1087,7 @@ function Invoke-DownloadAllTools {
         $totalTools++
     }
     
-    Write-Color "[*] Descargando herramientas Spokwn..." "Yellow"
+    Write-Color "[*] Descargando tools Spokwn..." "Yellow"
     $spokwnTools = @(
         @{Name="BAMParser"; Url="https://github.com/spokwn/BAM-parser/releases/download/v1.2.9/BAMParser.exe"},
         @{Name="PrefetchParser"; Url="https://github.com/spokwn/prefetch-parser/releases/download/v1.5.5/PrefetchParser.exe"},
@@ -1105,7 +1105,7 @@ function Invoke-DownloadAllTools {
         $totalTools++
     }
 
-        Write-Color "`n[4/6] Herramientas Orbdiff..." "Cyan"
+        Write-Color "`n[4/6] Tools Orbdiff..." "Cyan"
     $orbdiffTools = @(
         @{Name="PrefetchView++"; Url="https://github.com/Orbdiff/PrefetchView/releases/download/v1.5/PrefetchView++.exe"},
         @{Name="JARParser"; Url="https://github.com/Orbdiff/JARParser/releases/download/v1.2/JARParser.exe"},
@@ -1128,7 +1128,7 @@ function Invoke-DownloadAllTools {
         $totalTools++
         Start-Sleep -Milliseconds 300
     }
-Write-Color "`n[5/6] Otras Herramientas..." "Cyan"
+Write-Color "`n[5/6] Otras Tools..." "Cyan"
 $otherTools = @(
 @{Name="Everything"; Url="https://www.voidtools.com/Everything-1.4.1.1029.x86-Setup.exe"},
 @{Name="SystemInformer"; Url="https://github.com/winsiderss/si-builds/releases/download/3.2.25297.1516/systeminformer-build-canary-setup.exe"}
@@ -1152,7 +1152,7 @@ $otherTools = @(
    }            
 
 
-    Write-Color "`n[+] $totalSuccess/$totalTools herramientas principales descargadas" "Green"
+    Write-Color "`n[+] $totalSuccess/$totalTools tools principales descargadas" "Green"
     Write-Color "[*] Ubicación: $mainPath" "White"
     
     $open = Read-Host "`n[?] ¿Abrir carpeta principal? (S/N)"
@@ -2044,7 +2044,7 @@ Write-Menu "              DOOMSDAY-FUCKER DETECTOR" -IsTitle
     
    
     if (-not $global:isAdmin) {
-        Write-Color "[!] Esta herramienta requiere permisos de administrador" "Red"
+        Write-Color "[!] Esta tool requiere permisos de administrador" "Red"
         Write-Color "[*] Solicitando elevación de permisos..." "Yellow"
         
         try {
@@ -2160,4 +2160,3 @@ function Main {
 }
 
 Main
-
