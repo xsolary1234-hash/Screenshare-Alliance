@@ -2107,7 +2107,7 @@ function Show-MainMenu {
     Write-Menu "========================================================" -IsTitle
     Write-Host ""
     
-    Write-Menu "[1] Herramientas de Prefetch" -IsOption
+    Write-Menu "[1] Prefetch Tools" -IsOption
     Write-Menu "[2] Descargar SS Tools" -IsOption
     Write-Menu "[3] Scripts" -IsOption
     Write-Menu "[4] Salir" -IsOption
@@ -2160,3 +2160,4 @@ function Main {
 }
 
 Main
+
