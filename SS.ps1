@@ -301,7 +301,7 @@ function Show-PrefetchMenu {
     Write-Menu "[2] Descargar WinPrefetchView (Nirsoft)" -IsOption
     Write-Menu "[3] Descargar Prefetch Parser (Spokwn)" -IsOption
     Write-Menu "[4] Analizar prefetch local" -IsOption
-    Write-Menu "[5] Descargar TODAS las tools Prefetch" -IsOption
+    Write-Menu "[5] Descargar Todas las Prefetch tools" -IsOption
     Write-Menu "[6] Volver al menú principal" -IsOption
     Write-Host ""
     Write-Menu "--------------------------------------------------------" -IsTitle
@@ -2160,3 +2160,4 @@ function Main {
 }
 
 Main
+
